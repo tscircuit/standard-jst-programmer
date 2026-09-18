@@ -1,0 +1,30 @@
+name: Validate circuits and build firmware
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  circuits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.2
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun run build -- --svgs
+      - run: bun run test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: circuits
+          path: dist/
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y cmake gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
+      - run: bash firmware/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: standard-jst-programmer-uf2
+          path: dist/firmware/*.uf2
