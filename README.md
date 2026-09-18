@@ -69,7 +69,7 @@ The module footprint is surface-mount/castellated. Use the specified RP2040-Zero
 
 ## Firmware and debugging
 
-`firmware/build.sh` builds Raspberry Pi **debugprobe (CMSIS-DAP)** at pinned commit `3fff5b240ca8200c7ad538cb61c02dfc39bda831` with Pico SDK 2.2.0. Its custom board configuration enables GP2/GP3 SWD and GP1 open-drain reset, omits UART/LED assignments, and disables the reset internal pull-up because the PCB provides a target-referenced pull-up.
+`firmware/build.sh` builds Raspberry Pi **debugprobe (CMSIS-DAP)** at pinned commit `3fff5b240ca8200c7ad538cb61c02dfc39bda831` with Pico SDK commit `079c6f39023649b154152db30f1d781e884879bc` (includes the required `pico_usb_reset` API). Its custom board configuration enables GP2/GP3 SWD and GP1 open-drain reset, leaves the upstream CDC UART on unconnected GP4/GP5 (no UART in the cable), omits LED assignments, and disables the reset internal pull-up because the PCB provides a target-referenced pull-up.
 
 Dependencies: Git, Python 3, CMake, an Arm GNU bare-metal toolchain (`arm-none-eabi-gcc`), and newlib including C++ support.
 

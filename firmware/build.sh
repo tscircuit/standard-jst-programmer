@@ -11,7 +11,7 @@ git -C "$firmware_work/debugprobe" submodule update --init --recursive
 if [ ! -d "$firmware_work/pico-sdk/.git" ]; then
   git clone https://github.com/raspberrypi/pico-sdk.git "$firmware_work/pico-sdk"
 fi
-git -C "$firmware_work/pico-sdk" checkout a1438dff1d38bd9c65dbd693f0e5db4b9ae91779
+git -C "$firmware_work/pico-sdk" checkout 079c6f39023649b154152db30f1d781e884879bc
 git -C "$firmware_work/pico-sdk" submodule update --init --recursive
 cp "$repo_root/firmware/board_standard_jst_config.h" "$firmware_work/debugprobe/include/board_standard_jst_config.h"
 python3 - "$firmware_work/debugprobe" <<'PY'
