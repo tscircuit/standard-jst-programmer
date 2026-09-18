@@ -10,7 +10,7 @@ This repository contains three circuits:
 | --- | --- | --- |
 | `circuits/upward.circuit.tsx` | Top-entry target connector | JST BM05B-SRSS-TB(LF)(SN), JLCPCB C160391 |
 | `circuits/side.circuit.tsx` | Side-entry target connector | JST SM05B-SRSS-TB(LF)(SN), JLCPCB C136657 |
-| `circuits/programmer.circuit.tsx` | 46 × 70 mm discrete programmer | RP2040 QFN-56, USB-C, external flash and regulator |
+| `circuits/programmer.circuit.tsx` | 26 × 38 mm discrete programmer | RP2040 QFN-56, USB-C, external flash and regulator |
 
 The default preview (`preview.circuit.tsx`, selected by `previewComponentPath` in `tscircuit.config.json`) shows the programmer and both connector boards together. This is a display panel with outline cutouts and no manufacturing tabs; use the three individual circuits for fabrication or import. Placement DRC runs on each individual circuit; the display panel skips placement DRC because the current checker applies the programmer outline to the connector coupons. Routing DRC remains enabled in the panel.
 
@@ -73,9 +73,9 @@ Reset has a 10 kΩ pull-up to the **target** rail. The target rail has a 100 nF 
 - Power both programmer and target before starting SWD. Do not leave an active probe driving an unpowered target or a powered target connected to an unpowered probe.
 - Use a short cable (start at ≤100 mm) and a 1 MHz SWD clock. Increase speed only after verifying reliable operation.
 
-USB-C access is at the top edge; JST cable access is at the left edge. Install JP_PWR as a two-pin header and leave the shunt off by default. Assembly includes fine-pitch QFN/WSON devices and 0402 passives. The layout uses 0.1 mm traces in dense areas; verify the fabrication stackup and the USB connector's mechanical requirements before fabrication.
+The programmer is **26 × 38 mm**, about **69% less PCB area** than the previous 46 × 70 mm layout. All components mount on the **top side**; two copper layers are used for routing and ground return. USB-C access is at the top edge and JST cable access is at the opposite, bottom edge. The JST contacts are numbered on top silkscreen, with a nearby legend: **1:3V3, 2:SWDIO, 3:GND, 4:SWCLK, 5:nRESET**. Install JP_PWR as a two-pin header and leave the shunt off by default. Assembly includes fine-pitch QFN/WSON devices and 0402 passives. The layout uses 0.1 mm traces in dense areas; verify the fabrication stackup and the USB connector's mechanical requirements before fabrication.
 
-The four bottom test pads expose the **programmer RP2040's own** SWCLK, GND, SWDIO and 3.3 V for recovery. These are separate from the target-programming signals on the five-pin JST. SW_RUN resets the programmer; JST nRESET resets the target.
+There are no test points. Use the USB BOOTSEL button for firmware loading and recovery. SW_RUN resets the programmer; JST nRESET resets the target.
 
 ## Firmware and debugging
 
@@ -117,7 +117,7 @@ bun run test
 bun run dev
 ```
 
-The checks verify both connector pad/pin mappings, exactly five signal pins plus two mechanical mounting tabs, programmer SWD/reset connectivity, ground continuity, open-jumper power isolation, bare RP2040 supply separation, all six QSPI connections, both USB-C data orientations, CC pull-downs, BOOTSEL series resistance, and absence of build/DRC error records. The routed board and generated schematic are inspected visually. CI separately compiles the custom firmware.
+The checks verify the 26 × 38 mm outline, top-side-only assembly, opposite connector edges, absence of test points, readable JST pinout text, both connector pad/pin mappings, exactly five signal pins plus two mechanical mounting tabs, programmer SWD/reset connectivity, ground continuity, open-jumper power isolation, bare RP2040 supply separation, all six QSPI connections, both USB-C data orientations, CC pull-downs, BOOTSEL series resistance, and absence of build/DRC error records. The routed board and generated schematic are inspected visually. CI separately compiles the custom firmware.
 
 **Prototype status:** generated routing and software checks do not replace assembled hardware testing. No board has been manufactured or electrically tested for this revision. The imported chip footprints lack complete electrical pin metadata, so ERC cannot prove the whole electrical design. Validate USB signal integrity, the oscillator, power budget, connector mechanical fit, and cable continuity before ordering a batch.
 

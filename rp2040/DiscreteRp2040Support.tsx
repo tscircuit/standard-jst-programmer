@@ -83,9 +83,9 @@ export const DiscreteRp2040Support = ({
     <B5819W_SL
       name="D_VBUS"
       schSectionName={schSections.power(name)}
-      pcbX={-2}
-      pcbY={21}
-      pcbRotation={90}
+      pcbX={-9}
+      pcbY={7}
+      pcbRotation={0}
       schX={3}
       schY={-5.8}
       schRotation={90}
@@ -103,8 +103,8 @@ export const DiscreteRp2040Support = ({
       resistance="100k"
       footprint="0402"
       schSectionName={schSections.power(name)}
-      pcbX={-4.7}
-      pcbY={17.3}
+      pcbX={-6.5}
+      pcbY={11.7}
       pcbRotation={90}
       schX={3}
       schY={-7}
@@ -125,11 +125,11 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
-      pcbX={-0.8}
-      pcbY={5.7}
+      pcbX={6}
+      pcbY={4.5}
       schX={-11.3}
       schY={-6.4}
-      pcbRotation={90}
+      pcbRotation={0}
     />
     <capacitor
       name="C_IOVDD2"
@@ -227,8 +227,8 @@ export const DiscreteRp2040Support = ({
       resistance="10k"
       footprint="0402"
       schSectionName={schSections.controls(name)}
-      pcbX={10.4}
-      pcbY={-5.5}
+      pcbX={9}
+      pcbY={-3.5}
       schX={12.8}
       schY={-13.5}
       schRotation={90}
@@ -266,8 +266,8 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.power(name)}
       schOrientation="vertical"
-      pcbX={6}
-      pcbY={5.7}
+      pcbX={7}
+      pcbY={6.5}
       schX={1.3}
       schY={-9.2}
       pcbRotation={90}
@@ -332,7 +332,7 @@ export const DiscreteRp2040Support = ({
       name="J_USB"
       schSectionName={schSections.usb(name)}
       pcbX={0}
-      pcbY={31.0}
+      pcbY={15}
       pcbRotation={180}
       schX={10.5}
       schY={-5.3}
@@ -372,8 +372,8 @@ export const DiscreteRp2040Support = ({
     <AP2112K_3_3TRG1
       name="U3"
       schSectionName={schSections.power(name)}
-      pcbX={-7.2}
-      pcbY={20.2}
+      pcbX={-9}
+      pcbY={13}
       pcbRotation={180}
       schX={1.3}
       schY={-7.8}
@@ -393,16 +393,16 @@ export const DiscreteRp2040Support = ({
     <SKRPACE010
       name="SW_BOOT"
       schSectionName={schSections.controls(name)}
-      pcbX={8.6}
-      pcbY={21.8}
+      pcbX={8.5}
+      pcbY={12.5}
       schX={8.6}
       schY={-12}
     />
     <SKRPACE010
       name="SW_RUN"
       schSectionName={schSections.controls(name)}
-      pcbX={5.5}
-      pcbY={-12.5}
+      pcbX={8.5}
+      pcbY={-7.5}
       pcbRotation={90}
       schX={12.8}
       schY={-12}
@@ -422,9 +422,9 @@ export const DiscreteRp2040Support = ({
       name="D_PWR"
       color="green"
       schSectionName={schSections.status(name)}
-      pcbX={-9.8}
-      pcbY={24.8}
-      pcbRotation={90}
+      pcbX={-8}
+      pcbY={17.5}
+      pcbRotation={0}
       schX={14.5}
       schY={-13.4}
       schRotation={90}
@@ -435,8 +435,8 @@ export const DiscreteRp2040Support = ({
       resistance="10k"
       footprint="0402"
       schSectionName={schSections.controls(name)}
-      pcbX={12}
-      pcbY={17.8}
+      pcbX={9}
+      pcbY={9}
       pcbRotation={90}
       schX={8.6}
       schY={-13.5}
@@ -459,9 +459,9 @@ export const DiscreteRp2040Support = ({
       resistance="330"
       footprint="0402"
       schSectionName={schSections.status(name)}
-      pcbX={-6.2}
-      pcbY={24.8}
-      pcbRotation={90}
+      pcbX={-11}
+      pcbY={18}
+      pcbRotation={0}
       schX={14.5}
       schY={-12.2}
       schRotation={270}
@@ -471,8 +471,8 @@ export const DiscreteRp2040Support = ({
       resistance="5.1k"
       footprint="0402"
       schSectionName={schSections.usb(name)}
-      pcbX={-0.2}
-      pcbY={25.6}
+      pcbX={0}
+      pcbY={11.5}
       pcbRotation={180}
       schX={7.2}
       schY={-7.5}
@@ -483,8 +483,8 @@ export const DiscreteRp2040Support = ({
       resistance="5.1k"
       footprint="0402"
       schSectionName={schSections.usb(name)}
-      pcbX={3.6}
-      pcbY={26.5}
+      pcbX={2}
+      pcbY={11.5}
       schX={14.8}
       schY={-6.5}
       schRotation={270}
@@ -518,9 +518,9 @@ export const DiscreteRp2040Support = ({
       footprint="0603"
       schSectionName={schSections.usb(name)}
       schOrientation="vertical"
-      pcbX={-2.8}
-      pcbY={26.3}
-      pcbRotation={90}
+      pcbX={-7.5}
+      pcbY={15.5}
+      pcbRotation={0}
       schX={9}
       schY={-2.2}
     />
@@ -530,8 +530,8 @@ export const DiscreteRp2040Support = ({
       footprint="0603"
       schSectionName={schSections.power(name)}
       schOrientation="vertical"
-      pcbX={-8.5}
-      pcbY={4.2}
+      pcbX={-9}
+      pcbY={9}
       schX={4.1}
       schY={-7.8}
     />
@@ -553,8 +553,8 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.usb(name)}
       schOrientation="vertical"
-      pcbX={9.8}
-      pcbY={18.4}
+      pcbX={6}
+      pcbY={9}
       schX={10.8}
       schY={-2.2}
     />
@@ -595,51 +595,6 @@ export const DiscreteRp2040Support = ({
       pcbRotation={90}
     />
 
-    <testpoint
-      name="TP_SWCLK"
-      footprintVariant="pad"
-      padShape="circle"
-      padDiameter="1.1mm"
-      schSectionName={schSections.debug(name)}
-      pcbX={-6}
-      pcbY={-31}
-      schX={8.6}
-      schY={-16.5}
-    />
-    <testpoint
-      name="TP_GND"
-      footprintVariant="pad"
-      padShape="circle"
-      padDiameter="1.1mm"
-      schSectionName={schSections.debug(name)}
-      pcbX={-2}
-      pcbY={-31}
-      schX={10.4}
-      schY={-16.5}
-    />
-    <testpoint
-      name="TP_SWDIO"
-      footprintVariant="pad"
-      padShape="circle"
-      padDiameter="1.1mm"
-      schSectionName={schSections.debug(name)}
-      pcbX={2}
-      pcbY={-31}
-      schX={12.2}
-      schY={-16.5}
-    />
-    <testpoint
-      name="TP_3V3"
-      footprintVariant="pad"
-      padShape="circle"
-      padDiameter="1.1mm"
-      schSectionName={schSections.debug(name)}
-      pcbX={6}
-      pcbY={-31}
-      schX={14}
-      schY={-16.5}
-    />
-
     <trace
       {...denseTraceProps}
       name="QSPI_SS"
@@ -650,6 +605,19 @@ export const DiscreteRp2040Support = ({
     <trace
       {...denseTraceProps}
       name="QSPI_SD0"
+      pcbPath={[
+        ".U1 > .QSPI_SD0",
+        { x: -1.40035, y: 3.8656 },
+        { x: -1.564, y: 4.2154 },
+        { x: -1.564, y: 4.2154, via: true, fromLayer: "top", toLayer: "bottom" },
+        { x: -1.564, y: 4.2154 },
+        { x: -4.3, y: 10.9 },
+        { x: -4.3, y: 10.9, via: true, fromLayer: "bottom", toLayer: "top" },
+        { x: -4.3, y: 10.9 },
+        { x: -5.5, y: 10.5 },
+        { x: -5.5, y: 9.75 },
+        ".U2 > .pin5",
+      ]}
       from=".U1 > .QSPI_SD0"
       to=".U2 > .pin5"
       schDisplayLabel="QSPI_SD0"
@@ -906,7 +874,8 @@ export const DiscreteRp2040Support = ({
         ".R_XOSC > .pin2",
       ]}
     />
-    <trace name="CXIN" from=".C_XIN > .pin1" to=".Y1 > .X1" />
+    <trace name="CXIN" from=".C_XIN > .pin1" to=".Y1 > .X1"
+      pcbPath={[".C_XIN > .pin1", ".Y1 > .X1"]} thickness="0.1mm" />
     <trace name="CXIN_G" from=".C_XIN > .pin2" to="net.GND" {...gndLabel} />
     <trace name="CXOUT" from=".C_XOUT > .pin1" to=".Y1 > .X2" />
     <trace name="CXOUT_G" from=".C_XOUT > .pin2" to="net.GND" {...gndLabel} />
@@ -936,22 +905,12 @@ export const DiscreteRp2040Support = ({
     <trace name="PLED_D" from=".R_PWR_LED > .pin2" to=".D_PWR > .anode" />
     <trace name="PLED_G" from=".D_PWR > .cathode" to="net.GND" {...gndLabel} />
 
-    <trace name="SWCLK" from=".U1 > .SWCLK" to=".TP_SWCLK > .pin1" />
-    <trace name="SWD" from=".U1 > .SWD" to=".TP_SWDIO > .pin1" />
-    <trace name="TP_G" from=".TP_GND > .pin1" to="net.GND" {...gndLabel} />
-    <trace name="TP3V3_T" from=".TP_3V3 > .pin1" to="net.V3V3" {...v3v3Label} />
-
-    <silkscreentext text="BOOT" fontSize="0.8mm" pcbX={12} pcbY={14} />
-    <silkscreentext text="RUN" fontSize="0.8mm" pcbX={-12} pcbY={-30} />
-    <silkscreentext text="PWR" fontSize="0.8mm" pcbX={-9.8} pcbY={27.4} />
-    <silkscreentext text="USB-C" fontSize="0.9mm" pcbX={0} pcbY={25} />
-
     <resistor
       name="R_BOOT_SER"
       resistance="1k"
       footprint="0402"
-      pcbX={7}
-      pcbY={16}
+      pcbX={6.5}
+      pcbY={8}
       schX={7}
       schY={-10.5}
       schSectionName={schSections.controls(name)}
@@ -972,7 +931,7 @@ export const DiscreteRp2040Support = ({
       capacitance="1uF"
       footprint="0603"
       pcbX={-11}
-      pcbY={18.5}
+      pcbY={10.5}
       schX={-1}
       schY={-7.8}
       schOrientation="vertical"
@@ -984,7 +943,7 @@ export const DiscreteRp2040Support = ({
       capacitance="1uF"
       footprint="0603"
       pcbX={-11}
-      pcbY={21.5}
+      pcbY={16}
       schX={5.7}
       schY={-7.8}
       schOrientation="vertical"
@@ -1056,6 +1015,9 @@ export const DiscreteRp2040Support = ({
       ]}
     />
     <copperpour name="GND_BOTTOM" connectsTo="net.GND" layer="bottom" />
+    <silkscreentext text="BOOT" fontSize={0.75} pcbX={8.5} pcbY={15.5} />
+    <silkscreentext text="RUN" fontSize={0.75} pcbX={8.5} pcbY={-10.3} />
+    <silkscreentext text="PWR" fontSize={0.65} pcbX={-7.5} pcbY={18.5} />
     {children}
   </subcircuit>
 );

@@ -6,8 +6,9 @@ export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement
   return (
     <board
       placementDrcChecksDisabled={previewPlacement}
-      width={46}
-      height={70}
+      doubleSidedAssembly={false}
+      width={26}
+      height={38}
       autorouter="auto-local"
       autorouterEffortLevel="10x"
       minViaEdgeToPadEdgeClearance={0.15}
@@ -24,9 +25,10 @@ export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement
         <schematicsection name="target" displayName="Target SWD" />
         <StandardJstSwdSide
           name="J1"
-          pcbX={-19.5}
-          pcbY={3}
-          pcbRotation={270}
+          pcbStyle={{ silkscreenTextVisibility: "hidden" }}
+          pcbX={0}
+          pcbY={-15.9}
+          pcbRotation={0}
           schX={-14}
           schY={-2}
           schSectionName="target"
@@ -35,8 +37,8 @@ export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement
           name="R_CLK"
           resistance="47"
           footprint="0603"
-          pcbX={-13}
-          pcbY={4}
+          pcbX={-9}
+          pcbY={-1}
           schX={-19}
           schY={0}
           schSectionName="target"
@@ -45,8 +47,8 @@ export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement
           name="R_DIO"
           resistance="47"
           footprint="0603"
-          pcbX={-13}
-          pcbY={2}
+          pcbX={-9}
+          pcbY={1}
           schX={-19}
           schY={-1}
           schSectionName="target"
@@ -55,8 +57,8 @@ export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement
           name="R_RST"
           resistance="100"
           footprint="0603"
-          pcbX={-13}
-          pcbY={6}
+          pcbX={-9}
+          pcbY={3}
           schX={-19}
           schY={-2}
           schSectionName="target"
@@ -65,8 +67,8 @@ export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement
           name="R_PULLUP"
           resistance="10k"
           footprint="0603"
-          pcbX={-14}
-          pcbY={8}
+          pcbX={-9}
+          pcbY={5}
           schX={-16}
           schY={-5}
           schSectionName="target"
@@ -75,8 +77,8 @@ export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement
           name="C_TARGET"
           capacitance="100nF"
           footprint="0603"
-          pcbX={-16}
-          pcbY={-3}
+          pcbX={-9}
+          pcbY={-5}
           schX={-16}
           schY={3}
           schSectionName="target"
@@ -85,8 +87,8 @@ export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement
           name="JP_PWR"
           pinCount={2}
           pitch="2.54mm"
-          pcbX={-16}
-          pcbY={-18}
+          pcbX={-9}
+          pcbY={-13}
           schX={-19}
           schY={4}
           schSectionName="target"
@@ -105,19 +107,19 @@ export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement
         <trace name="T13" from=".J1 > .V3_3" to="net.TARGET_V3_3" />
         <trace name="T14" from=".JP_PWR > .pin2" to="net.TARGET_V3_3" />
         <trace name="T15" from=".JP_PWR > .pin1" to="net.V3V3" />
-        <silkscreentext
-          text="JST SWD v0.2"
-          pcbX={0}
-          pcbY={-23}
-          fontSize={1.1}
-        />
-        <silkscreentext text="3V3 POWER" pcbX={-16} pcbY={-21} fontSize={0.8} />
-        <silkscreentext
-          text="OPEN: EXT PWR"
-          pcbX={-15}
-          pcbY={-22.5}
-          fontSize={0.7}
-        />
+        <silkscreentext text="JST SWD" pcbX={0} pcbY={-11} fontSize={0.8} />
+        <silkscreentext text="1:3V3" pcbX={8.2} pcbY={-11.7} fontSize={0.9} />
+        <silkscreentext text="2:SWDIO" pcbX={8.2} pcbY={-13} fontSize={0.9} />
+        <silkscreentext text="3:GND" pcbX={8.2} pcbY={-14.3} fontSize={0.9} />
+        <silkscreentext text="4:SWCLK" pcbX={8.2} pcbY={-15.6} fontSize={0.9} />
+        <silkscreentext text="5:nRESET" pcbX={8.2} pcbY={-16.9} fontSize={0.9} />
+        <silkscreentext text="1" pcbX={-2} pcbY={-12.5} fontSize={0.65} />
+        <silkscreentext text="2" pcbX={-1} pcbY={-12.5} fontSize={0.65} />
+        <silkscreentext text="3" pcbX={0} pcbY={-12.5} fontSize={0.65} />
+        <silkscreentext text="4" pcbX={1} pcbY={-12.5} fontSize={0.65} />
+        <silkscreentext text="5" pcbX={2} pcbY={-12.5} fontSize={0.65} />
+        <silkscreentext text="3V3 OUT" pcbX={-9} pcbY={-16} fontSize={0.7} />
+        <silkscreentext text="OPEN=OFF" pcbX={-9} pcbY={-17.3} fontSize={0.65} />
       </DiscreteRp2040Support>
     </board>
   );

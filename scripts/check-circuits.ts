@@ -190,3 +190,18 @@ assert.equal(preview.filter(e => e.type.endsWith("_error")).length, 0, "preview:
 const positions = preview.filter(e => e.type === "pcb_board").map(e => `${e.display_offset_x},${e.display_offset_y}`);
 assert.equal(new Set(positions).size, 3, "preview: separate board positions");
 console.log("Three-board preview and JST CAD checks passed");
+
+const compact = load("programmer");
+const compactBoard = compact.find(e => e.type === "pcb_board");
+assert.equal(compactBoard.width, 26);
+assert.equal(compactBoard.height, 38);
+assert(compact.filter(e => e.type === "pcb_component").every(e => e.layer === "top"), "single-sided component assembly");
+assert(!compact.some(e => e.type === "source_component" && e.name.startsWith("TP_")), "no test points");
+const pcbFor = (name: string) => {
+  const source = compact.find(e => e.type === "source_component" && e.name === name);
+  return compact.find(e => e.type === "pcb_component" && e.source_component_id === source.source_component_id);
+};
+assert(pcbFor("J_USB").center.y > 14 && pcbFor("J1").center.y < -15, "opposite connector edges");
+for (const label of ["1:3V3", "2:SWDIO", "3:GND", "4:SWCLK", "5:nRESET"])
+  assert(compact.some(e => e.type === "pcb_silkscreen_text" && e.text === label && e.layer === "top"), `JST legend: ${label}`);
+console.log("Compact board dimensions, top-side assembly, opposite connectors, and pinout legend verified");

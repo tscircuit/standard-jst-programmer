@@ -9,10 +9,10 @@ import { ProgrammerBoard } from "./programmer"
  */
 export default function Preview() {
   return (
-    <panel layoutMode="none" width={90} height={80} panelizationMethod="outline_routing">
+    <panel layoutMode="none" width={60} height={44} panelizationMethod="outline_routing">
       <ProgrammerBoard previewPlacement />
-      <UpwardBoard placementDrcChecksDisabled pcbX={35} pcbY={9} />
-      <SideBoard placementDrcChecksDisabled pcbX={35} pcbY={-9} />
+      <UpwardBoard placementDrcChecksDisabled pcbX={22} pcbY={9} />
+      <SideBoard placementDrcChecksDisabled pcbX={22} pcbY={-9} />
     </panel>
   )
 }
