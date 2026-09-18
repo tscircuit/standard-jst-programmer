@@ -109,6 +109,12 @@ The checks verify both connector pad/pin mappings, exactly five signal pins plus
 
 **Prototype status:** generated routing and software checks do not replace assembled hardware testing. No board has been manufactured or electrically tested for this revision. The module package lacks complete electrical pin metadata, so ERC cannot prove the whole electrical design. Validate the selected module, connector mechanical fit, power budget, and cable continuity before ordering a batch.
 
+## Previews
+
+![Programmer PCB](docs/programmer-pcb.png)
+
+![Programmer schematic](docs/programmer-schematic.png)
+
 ## Sources
 
 - [JST SH datasheet](https://www.jst-mfg.com/product/pdf/eng/eSH.pdf)

@@ -2,7 +2,7 @@
   "name": "@tsci/tscircuit.standard-jst-programmer",
   "version": "0.1.0",
   "description": "Five-pin JST SH 1 mm SWD connectors and a USB-C RP2040 CMSIS-DAP programmer",
-  "main": "index.tsx",
+  "main": "dist/index.cjs",
   "keywords": [
     "tscircuit",
     "circuit",
@@ -31,5 +31,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/tscircuit/standard-jst-programmer.git"
-  }
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts"
 }
