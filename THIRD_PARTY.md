@@ -7,7 +7,7 @@ Original files:
 - Connector_JST.pretty/JST_SH_BM05B-SRSS-TB_1x05-1MP_P1.00mm_Vertical.kicad_mod
 - Connector_JST.pretty/JST_SH_SM05B-SRSS-TB_1x05-1MP_P1.00mm_Horizontal.kicad_mod
 
-Changes: removed legacy WRL model references for conversion compatibility; converted to TSX with tsci; made mounting pads mechanical; specified connector insertion direction; removed long fabrication text; added application signal labels. Original copper geometry and pin numbering are preserved.
+Changes: removed legacy WRL model references for conversion compatibility; converted to TSX with tsci; made mounting pads mechanical; specified connector insertion direction; removed long fabrication text; added application signal labels. Replaced the REF** placeholder with the component reference. Original copper geometry and pin numbering are preserved.
 
 The discrete RP2040 support circuit and eight imported component definitions in `rp2040/` are adapted from `tscircuit/common`, revision `a5797da88ec19944442d87392174af0a36fe1a0a`:
 https://github.com/tscircuit/common/tree/a5797da88ec19944442d87392174af0a36fe1a0a/lib/Microcontroller_RP2040
@@ -17,3 +17,5 @@ The original MIT license is retained at `rp2040/LICENSE`. Changes include local 
 Firmware sources are fetched from raspberrypi/debugprobe (MIT) and raspberrypi/pico-sdk (BSD-3-Clause), with their dependencies and original license notices. The build uses the pinned upstream versions and applies the local board configuration. Their licenses govern the resulting firmware and remain in the fetched source trees.
 
 Original code in this repository is MIT licensed. The MIT license does not override the licenses of third-party material.
+
+The JST 3D assets are referenced from the tscircuit model CDN, imported from JLCPCB/EasyEDA catalog parts C160391 (BM05B-SRSS-TB) and C136657 (SM05B-SRSS-TB). They are external vendor models, not original MIT-licensed model geometry. Model origin metadata is retained from tsci import; the vertical model rotation is adapted to the KiCad footprint.

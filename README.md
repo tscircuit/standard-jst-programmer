@@ -2,13 +2,19 @@
 
 Five-pin **JST SH, 1.00 mm pitch** SWD interface for **3.3 V targets**, with importable top-entry and side-entry connectors and a USB-C RP2040 programmer.
 
+![All three boards in the default 3D preview](docs/preview-3d.png)
+
 This repository contains three circuits:
 
 | Circuit | Purpose | Part |
 | --- | --- | --- |
-| `circuits/upward.circuit.tsx` | Top-entry target connector (main preview) | JST BM05B-SRSS-TB(LF)(SN), JLCPCB C160391 |
+| `circuits/upward.circuit.tsx` | Top-entry target connector | JST BM05B-SRSS-TB(LF)(SN), JLCPCB C160391 |
 | `circuits/side.circuit.tsx` | Side-entry target connector | JST SM05B-SRSS-TB(LF)(SN), JLCPCB C136657 |
 | `circuits/programmer.circuit.tsx` | 46 × 70 mm discrete programmer | RP2040 QFN-56, USB-C, external flash and regulator |
+
+The default preview (`preview.circuit.tsx`, selected by `previewComponentPath` in `tscircuit.config.json`) shows the programmer and both connector boards together. This is a display panel with outline cutouts and no manufacturing tabs; use the three individual circuits for fabrication or import. Placement DRC runs on each individual circuit; the display panel skips placement DRC because the current checker applies the programmer outline to the connector coupons. Routing DRC remains enabled in the panel.
+
+Both connectors include part-specific OBJ and STEP models from the JLCPCB/EasyEDA catalog via tscircuit's model CDN. Their KiCad footprints retain five numbered contacts and two mechanical mounting pads. The vertical model is rotated to match KiCad's pin-1 orientation. The selected manufacturer parts and 1 mm pitch are documented in [JST's SH datasheet](https://www.jst-mfg.com/product/pdf/eng/eSH.pdf).
 
 The programmer uses a **bare RP2040 QFN-56 chip**, a W25Q16JV 2 MiB QSPI flash, an AP2112K 3.3 V regulator, a 12 MHz crystal, and an onboard USB-C connector. All support components, BOOT/RUN buttons and LEDs are on this PCB.
 

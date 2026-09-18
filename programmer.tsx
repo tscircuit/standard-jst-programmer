@@ -2,9 +2,10 @@ import { DiscreteRp2040Support } from "./rp2040/DiscreteRp2040Support";
 import { StandardJstSwdSide } from "./connectors";
 
 /** Discrete RP2040 + USB-C support circuit adapted from tscircuit/common. */
-export function ProgrammerBoard() {
+export function ProgrammerBoard({ previewPlacement = false }: { previewPlacement?: boolean } = {}) {
   return (
     <board
+      placementDrcChecksDisabled={previewPlacement}
       width={46}
       height={70}
       autorouter="auto-local"
@@ -14,6 +15,7 @@ export function ProgrammerBoard() {
       minViaHoleDiameter={0.2}
     >
       <DiscreteRp2040Support
+        placementDrcChecksDisabled={previewPlacement}
         name="MCU"
         minViaEdgeToPadEdgeClearance={0.15}
         minViaPadDiameter={0.45}

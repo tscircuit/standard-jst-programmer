@@ -36,6 +36,11 @@ for (const variant of ["upward", "side", "programmer"]) {
       e.type === "pcb_component" &&
       e.source_component_id === j.source_component_id,
   );
+  const cad = circuit.find((e) => e.type === "cad_component" && e.pcb_component_id === pc.pcb_component_id);
+  const part = variant === "upward" ? "C160391" : "C136657";
+  assert.deepEqual(j.supplier_part_numbers.jlcpcb, [part], `${variant}: JLCPCB part number`);
+  assert(cad?.model_obj_url?.includes(`${part}.obj`), `${variant}: matching 3D model`);
+  assert(cad?.model_step_url?.includes(`${part}.step`), `${variant}: matching STEP model`);
   const pads = circuit.filter(
     (e) =>
       e.type === "pcb_smtpad" && e.pcb_component_id === pc.pcb_component_id,
@@ -176,3 +181,12 @@ assert.notEqual(
 console.log(
   "Validated all three circuits: JST pinouts, bare RP2040 supplies/flash/USB/boot, SWD/reset, power isolation and DRC.",
 );
+
+const preview = JSON.parse(readFileSync("dist/preview/circuit.json", "utf8")) as any[];
+assert.equal((await runAllRoutingChecks(preview)).filter(e => e.type.endsWith("_error")).length, 0, "preview: independent routing DRC");
+assert.equal(preview.filter(e => e.type === "pcb_board").length, 3, "preview: all three boards");
+assert.equal(preview.filter(e => e.type === "cad_component" && /C160391|C136657/.test(e.model_obj_url ?? "")).length, 3, "preview: all three JST models");
+assert.equal(preview.filter(e => e.type.endsWith("_error")).length, 0, "preview: no build errors");
+const positions = preview.filter(e => e.type === "pcb_board").map(e => `${e.display_offset_x},${e.display_offset_y}`);
+assert.equal(new Set(positions).size, 3, "preview: separate board positions");
+console.log("Three-board preview and JST CAD checks passed");

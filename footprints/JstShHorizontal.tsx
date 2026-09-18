@@ -22,7 +22,7 @@ export const JstShHorizontal = (props: ChipProps) => (
 <fabricationnotepath route={[{"x":3.5,"y":1.675},{"x":3.5,"y":-2.575}]} strokeWidth={0.1} />
 <fabricationnotepath route={[{"x":-2.5,"y":1.675},{"x":-2,"y":0.967893}]} strokeWidth={0.1} />
 <fabricationnotepath route={[{"x":-2,"y":0.967893},{"x":-1.5,"y":1.675}]} strokeWidth={0.1} />
-<silkscreentext pcbX={0} pcbY={3.98} anchorAlignment="center" fontSize={1} font="tscircuit2024" layer="top" text="REF**" />
+<silkscreentext pcbX={0} pcbY={3.98} anchorAlignment="center" fontSize={1} font="tscircuit2024" layer="top" text="{NAME}" />
 <courtyardoutline outline={[{"x":-4.4,"y":3.28},{"x":-4.4,"y":-3.28}]} layer="top" />
 <courtyardoutline outline={[{"x":-4.4,"y":-3.28},{"x":4.4,"y":-3.28}]} layer="top" />
 <courtyardoutline outline={[{"x":4.4,"y":-3.28},{"x":4.4,"y":3.28}]} layer="top" />
