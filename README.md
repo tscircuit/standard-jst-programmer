@@ -1,6 +1,6 @@
 # Standard JST programmer
 
-Importable five-pin JST SH (1 mm) SWD connectors and a USB-C RP2040 programmer board for 3.3 V targets.
+Use a three-pin JST SH (1 mm) connector for SWD and an optional separate two-pin JST SH connector for power. The SWD connector follows the [Raspberry Pi Debug Connector pinout](https://datasheets.raspberrypi.com/debug/debug-connector-specification.pdf).
 
 ## Install
 
@@ -8,79 +8,65 @@ Importable five-pin JST SH (1 mm) SWD connectors and a USB-C RP2040 programmer b
 tsci add tscircuit/standard-jst-programmer
 ```
 
-## Choose a component
+## Choose components
 
 | Export | Use |
 | --- | --- |
-| `StandardJstSwdUpward` | Add an upward-facing programming connector to your board. |
-| `StandardJstSwdSide` | Add a side-facing programming connector with the same pinout. |
-| `ProgrammerBoard` | Use the complete 26 × 38 mm USB-C programmer board. |
+| `StandardJstSwdUpward` | Upward-facing three-pin SWD connector. Also the default export. |
+| `StandardJstSwdSide` | Side-facing three-pin SWD connector. |
+| `StandardJstPowerUpward` | Upward-facing two-pin power connector. |
+| `StandardJstPowerSide` | Side-facing two-pin power connector. |
+| `ProgrammerBoard` | Complete 26 × 38 mm USB-C programmer. |
 
-Both connectors include their footprint, JLCPCB part number, and 3D model.
+Each connector includes its footprint, JLCPCB part number, and 3D model. Version 0.4 replaces the previous five-pin interface; use matching three- and two-pin cables.
 
-## Add a connector to your board
+## Add SWD and power to a target board
 
 ```tsx
-import { StandardJstSwdUpward } from "@tsci/tscircuit.standard-jst-programmer"
+import {
+  StandardJstSwdUpward,
+  StandardJstPowerUpward,
+} from "@tsci/tscircuit.standard-jst-programmer"
 
 export default () => (
   <board width={30} height={20}>
-    <StandardJstSwdUpward name="J_DEBUG" pcbX={0} pcbY={5} />
+    <StandardJstSwdUpward name="J_DEBUG" pcbX={-5} pcbY={5} />
+    <StandardJstPowerUpward name="J_POWER" pcbX={5} pcbY={5} />
 
-    <trace from=".J_DEBUG > .V3_3" to="net.V3_3" />
-    <trace from=".J_DEBUG > .SWDIO" to="net.SWDIO" />
-    <trace from=".J_DEBUG > .GND" to="net.GND" />
     <trace from=".J_DEBUG > .SWCLK" to="net.SWCLK" />
-    <trace from=".J_DEBUG > .nRESET" to="net.nRESET" />
+    <trace from=".J_DEBUG > .GND" to="net.GND" />
+    <trace from=".J_DEBUG > .SWDIO" to="net.SWDIO" />
+    <trace from=".J_POWER > .VOUT" to="net.TARGET_POWER_IN" />
+    <trace from=".J_POWER > .GND" to="net.GND" />
 
-    {/* Add your MCU and connect its power, SWD, and reset pins to these nets. */}
+    {/* Add your MCU and power circuit. Connect SWCLK/SWDIO through
+        100 ohm series resistors placed close to the target MCU. */}
   </board>
 )
 ```
 
-The connector does not connect to global nets automatically. Use its `name` in trace selectors and wire all five signals explicitly. The net names above are examples; use the corresponding nets on your board.
+Connect `TARGET_POWER_IN` to the appropriate supply input on your target: a 3.3 V rail when selecting **3V3**, or a 5 V-rated input/regulator when selecting **5V**. Omit the power connector if the target has its own supply. Connectors do not connect to global nets automatically.
 
-### Use the side-facing connector
+For side entry, substitute `StandardJstSwdSide` and `StandardJstPowerSide`; the electrical pin assignments stay the same. At `pcbRotation={0}`, side-entry connectors open toward −Y. Rotate 90° for +X, 180° for +Y, or 270° for −X.
 
-Replace the connector in the example with:
+All four components accept placement props including `pcbX`, `pcbY`, `pcbRotation`, `schX`, and `schY`. The package exports `SwdConnectorProps` and `PowerConnectorProps` types.
 
-```tsx
-import { StandardJstSwdSide } from "@tsci/tscircuit.standard-jst-programmer"
+## Connect the cables
 
-// Inside your <board>:
-<StandardJstSwdSide
-  name="J_DEBUG"
-  pcbX={0}
-  pcbY={5}
-  pcbRotation={90}
-/>
-```
-
-At `pcbRotation={0}`, the side connector opens toward −Y. Rotate it 90° to open toward +X, 180° toward +Y, or 270° toward −X. Keep the same traces and pin assignments when switching connector orientation.
-
-Both connectors accept placement props such as `pcbX`, `pcbY`, `pcbRotation`, `schX`, and `schY`. The package also exports the `SwdConnectorProps` TypeScript type.
-
-### Default import
-
-The default export is the upward-facing connector:
-
-```tsx
-import StandardJstSwdUpward from "@tsci/tscircuit.standard-jst-programmer"
-```
-
-## Connect the pins
-
-| Pin | Selector | Connect to |
+| SWD pin | Selector | Target connection |
 | --- | --- | --- |
-| 1 | `.V3_3` | Target's 3.3 V rail |
-| 2 | `.SWDIO` | MCU SWD data |
-| 3 | `.GND` | Target ground |
-| 4 | `.SWCLK` | MCU SWD clock |
-| 5 | `.nRESET` or `.nReset` | MCU active-low reset; `RUN` on an RP2040 |
+| 1 | `.SWCLK` | SWD clock |
+| 2 | `.GND` | Ground |
+| 3 | `.SWDIO` | SWD data |
 
-This pinout is the convention used by this package. Use a five-way JST SH cable wired **1→1, 2→2, 3→3, 4→4, 5→5**; check contact numbers rather than relying on wire colors.
+| Power pin | Selector | Target connection |
+| --- | --- | --- |
+| 1 | `.VOUT` | Selected supply input |
+| 2 | `.GND` | Ground |
 
-## Use the programmer board
+Use straight-through JST SH cables: **1→1, 2→2, 3→3** for SWD and **1→1, 2→2** for power. Check contact numbers, not wire colors. The three-pin SWD connector accepts Raspberry Pi Debug Probe SWD cables. The separate power connector is this project's extension; the Raspberry Pi Debug Probe does not supply it. No reset signal is carried by either cable.
+
+## Use the programmer
 
 ```tsx
 import { ProgrammerBoard } from "@tsci/tscircuit.standard-jst-programmer"
@@ -88,8 +74,10 @@ import { ProgrammerBoard } from "@tsci/tscircuit.standard-jst-programmer"
 export default () => <ProgrammerBoard />
 ```
 
-`ProgrammerBoard` already contains a `<board>`, so use it as the root circuit rather than placing it inside another board. USB-C and the target JST connector are on opposite edges.
+`ProgrammerBoard` contains a `<board>`; use it as the root circuit. USB-C and the two target connectors are on opposite edges. The default package preview displays the programmer and both connector example boards together.
 
-For an assembled programmer, connect USB-C to your computer and the JST cable to your target's matching connector. Use this project's [custom firmware and OpenOCD configuration](firmware/).
+Connect USB-C to your computer and the SWD cable to your target. Use the [custom firmware and OpenOCD configuration](firmware/). Software reset is used; there is no external reset wire.
 
-Use **3.3 V targets only**. Leave `JP_PWR` open when the target has its own supply. Close it only when powering a small target from the programmer, with the target's other supplies disconnected; start with a target load of at most 50 mA. Power both boards before debugging.
+Before connecting target power, set `SW_PWR` to the labeled **3V3** or **5V** position. Disconnect the power cable before changing voltage. Both positions supply power; there is no OFF position. Leave the power cable unplugged when the target has another supply. Keep target consumption at or below 50 mA; this output has no dedicated current limiter.
+
+**SWD signal levels always remain 3.3 V**, including when the power output is set to 5 V. Use 5 V only with a compatible target power input; never connect it directly to a 3.3 V rail. Power the target before debugging.

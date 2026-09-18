@@ -5,9 +5,9 @@
 #define PROBE_PIN_OFFSET 2
 #define PROBE_PIN_SWCLK (PROBE_PIN_OFFSET + 0)
 #define PROBE_PIN_SWDIO (PROBE_PIN_OFFSET + 1)
-#define PROBE_PIN_RESET 1
+// Three-pin SWD has no physical reset signal.
 // Upstream compiles CDC unconditionally. Keep it on unconnected RP2040 pins;
-// no UART signal is routed to the five-pin JST connector.
+// no UART signal is routed to the three-pin JST connector.
 #define PROBE_CDC_UART
 #define PROBE_UART_TX 4
 #define PROBE_UART_RX 5

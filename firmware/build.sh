@@ -21,10 +21,7 @@ p = Path(sys.argv[1]) / 'src/probe_config.h'
 s = p.read_text()
 s = s.replace('#include "board_debug_probe_config.h"', '#include "board_standard_jst_config.h"')
 p.write_text(s)
-# Disable the probe-side reset pull-up; the board has a pull-up to TARGET_V3_3.
-# This avoids sourcing 3.3 V into the target reset when its own supply is absent.
-p = Path(sys.argv[1]) / 'src/probe.pio'
-p.write_text(p.read_text().replace('gpio_pull_up(PROBE_PIN_RESET);', 'gpio_disable_pulls(PROBE_PIN_RESET);'))
+
 PY
 cmake -S "$firmware_work/debugprobe" -B "$firmware_work/build" \
   -DPICO_SDK_PATH="$firmware_work/pico-sdk" \

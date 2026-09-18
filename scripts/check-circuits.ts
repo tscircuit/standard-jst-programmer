@@ -5,7 +5,7 @@ const load = (name: string) =>
   JSON.parse(
     readFileSync(`dist/circuits/${name}/circuit.json`, "utf8"),
   ) as any[];
-const expected = ["V3_3", "SWDIO", "GND", "SWCLK", "nRESET"];
+
 for (const variant of ["upward", "side", "programmer"]) {
   const circuit = load(variant);
   // Run checks directly: asynchronous renderer failures must not look like clean DRC.
@@ -16,15 +16,16 @@ for (const variant of ["upward", "side", "programmer"]) {
     0,
     `${variant}: build/DRC errors`,
   );
+  for (const [name, expected] of [["J1", ["SWCLK", "GND", "SWDIO"]], ["J2", ["VOUT", "GND"]]] as const) {
   const j = circuit.find(
-    (e) => e.type === "source_component" && e.name === "J1",
+    (e) => e.type === "source_component" && e.name === name,
   );
   const ports = circuit.filter(
     (e) =>
       e.type === "source_port" &&
       e.source_component_id === j.source_component_id,
   );
-  assert.equal(ports.length, 5, `${variant}: exactly five electrical pins`);
+  assert.equal(ports.length, expected.length, `${variant} ${name}: electrical pin count`);
   expected.forEach((label, i) =>
     assert(
       ports.find((p) => p.pin_number === i + 1 && p.port_hints.includes(label)),
@@ -37,7 +38,7 @@ for (const variant of ["upward", "side", "programmer"]) {
       e.source_component_id === j.source_component_id,
   );
   const cad = circuit.find((e) => e.type === "cad_component" && e.pcb_component_id === pc.pcb_component_id);
-  const part = variant === "upward" ? "C160391" : "C136657";
+  const part = name === "J1" ? (variant === "upward" ? "C160389" : "C160403") : (variant === "upward" ? "C160388" : "C160402");
   assert.deepEqual(j.supplier_part_numbers.jlcpcb, [part], `${variant}: JLCPCB part number`);
   assert(cad?.model_obj_url?.includes(`${part}.obj`), `${variant}: matching 3D model`);
   assert(cad?.model_step_url?.includes(`${part}.step`), `${variant}: matching STEP model`);
@@ -47,13 +48,14 @@ for (const variant of ["upward", "side", "programmer"]) {
   );
   assert.equal(
     pads.length,
-    7,
-    `${variant}: five contacts plus two mounting tabs`,
+    expected.length + 2,
+    `${variant}: contacts plus two mounting tabs`,
   );
   const signalPads = pads.filter((p) => p.pcb_port_id);
-  assert.equal(signalPads.length, 5);
+  assert.equal(signalPads.length, expected.length);
   for (const pad of signalPads)
     assert(Math.abs(Math.min(pad.width, pad.height) - 0.6) < 0.001);
+}
 }
 const circuit = load("programmer");
 const components = circuit.filter((e) => e.type === "source_component");
@@ -66,7 +68,7 @@ const port = (name: string, label: string) => {
       e.port_hints.includes(label),
   ).source_port_id;
 };
-// Union ports and named nets through wires only; resistors and the open jumper do not short nets.
+// Union ports and named nets through wires only; resistors and the selector do not short nets.
 const parent = new Map<string, string>();
 const root = (s: string): string => (parent.has(s) ? root(parent.get(s)!) : s);
 for (const trace of circuit.filter((e) => e.type === "source_trace")) {
@@ -83,23 +85,25 @@ for (const trace of circuit.filter((e) => e.type === "source_trace")) {
 const connected = (a: string, b: string) => assert.equal(root(a), root(b));
 connected(port("U1", "GPIO2"), port("R_CLK", "pin1"));
 connected(port("U1", "GPIO3"), port("R_DIO", "pin1"));
-connected(port("U1", "GPIO1"), port("R_RST", "pin1"));
 connected(port("R_CLK", "pin2"), port("J1", "SWCLK"));
 connected(port("R_DIO", "pin2"), port("J1", "SWDIO"));
-connected(port("R_RST", "pin2"), port("J1", "nRESET"));
 connected(port("J1", "GND"), port("U1", "GND"));
-connected(port("JP_PWR", "pin2"), port("J1", "V3_3"));
-connected(port("JP_PWR", "pin1"), port("U3", "VOUT"));
-assert.notEqual(
-  root(port("J1", "V3_3")),
-  root(port("U3", "VOUT")),
-  "Open jumper must isolate target and probe power",
-);
-assert.notEqual(
-  root(port("J1", "V3_3")),
-  root(port("J1", "GND")),
-  "Target supply must not short to ground",
-);
+connected(port("J2", "GND"), port("U1", "GND"));
+connected(port("SW_PWR", "pin2"), port("J2", "VOUT"));
+connected(port("SW_PWR", "pin3"), port("J_USB", "A4B9"));
+connected(port("SW_PWR", "pin1"), port("U3", "VOUT"));
+const powerNodes = [port("SW_PWR", "pin1"), port("SW_PWR", "pin2"), port("SW_PWR", "pin3"), port("J2", "GND")].map(root);
+assert.equal(new Set(powerNodes).size, 4, "Selector throws, common, and ground must be separate copper nets");
+for (const selected of [0, 2]) {
+  const state = (n: string) => root(n) === powerNodes[selected] ? powerNodes[1] : root(n);
+  assert.equal(state(port("J2", "VOUT")), state(port("SW_PWR", selected === 0 ? "pin1" : "pin3")));
+  assert.notEqual(state(port("SW_PWR", "pin1")), state(port("SW_PWR", "pin3")), "Neither selector position shorts the supply rails");
+}
+for (const name of ["R_CLK", "R_DIO"]) assert.equal(components.find(e => e.name === name).resistance, 100, "100 ohm source termination");
+assert(!components.some(e => ["R_RST", "R_PULLUP", "JP_PWR"].includes(e.name)), "Old reset and jumper circuit removed");
+assert.deepEqual(components.find(e => e.name === "SW_PWR").supplier_part_numbers.jlcpcb, ["C221660"]);
+assert(!readFileSync("firmware/board_standard_jst_config.h", "utf8").includes("#define PROBE_PIN_RESET"));
+assert(readFileSync("firmware/openocd.cfg", "utf8").includes("reset_config none"));
 assert(
   circuit.some((e) => e.type === "pcb_trace"),
   "Programmer must have routed copper",
@@ -173,19 +177,14 @@ assert.notEqual(
   root(port("U1", "QSPI_SS")),
   "BOOTSEL must include the 1k series resistor",
 );
-assert.notEqual(
-  root(port("J1", "nRESET")),
-  root(port("U1", "RUN")),
-  "Target reset must not reset the programmer",
-);
 console.log(
-  "Validated all three circuits: JST pinouts, bare RP2040 supplies/flash/USB/boot, SWD/reset, power isolation and DRC.",
+  "Validated all three circuits: JST pinouts, bare RP2040 supplies/flash/USB/boot, SWD, selectable power isolation and DRC.",
 );
 
 const preview = JSON.parse(readFileSync("dist/preview/circuit.json", "utf8")) as any[];
 assert.equal((await runAllRoutingChecks(preview)).filter(e => e.type.endsWith("_error")).length, 0, "preview: independent routing DRC");
 assert.equal(preview.filter(e => e.type === "pcb_board").length, 3, "preview: all three boards");
-assert.equal(preview.filter(e => e.type === "cad_component" && /C160391|C136657/.test(e.model_obj_url ?? "")).length, 3, "preview: all three JST models");
+assert.equal(preview.filter(e => e.type === "cad_component" && /C160389|C160403|C160388|C160402/.test(e.model_obj_url ?? "")).length, 6, "preview: all six JST models");
 assert.equal(preview.filter(e => e.type.endsWith("_error")).length, 0, "preview: no build errors");
 const positions = preview.filter(e => e.type === "pcb_board").map(e => `${e.display_offset_x},${e.display_offset_y}`);
 assert.equal(new Set(positions).size, 3, "preview: separate board positions");
@@ -202,6 +201,6 @@ const pcbFor = (name: string) => {
   return compact.find(e => e.type === "pcb_component" && e.source_component_id === source.source_component_id);
 };
 assert(pcbFor("J_USB").center.y > 14 && pcbFor("J1").center.y < -15, "opposite connector edges");
-for (const label of ["1:3V3", "2:SWDIO", "3:GND", "4:SWCLK", "5:nRESET"])
+for (const label of ["1:CLK 2:GND 3:DIO", "1:VOUT 2:GND", "5V", "3V3", "IO:3V3"])
   assert(compact.some(e => e.type === "pcb_silkscreen_text" && e.text === label && e.layer === "top"), `JST legend: ${label}`);
 console.log("Compact board dimensions, top-side assembly, opposite connectors, and pinout legend verified");
