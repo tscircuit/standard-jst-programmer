@@ -76,7 +76,7 @@ export default () => <ProgrammerBoard />
 
 `ProgrammerBoard` contains a `<board>`; use it as the root circuit. USB-C and the two target connectors are on opposite edges. The default package preview displays the programmer and both connector example boards together.
 
-Connect USB-C to your computer and the SWD cable to your target. Use the [custom firmware and OpenOCD configuration](firmware/). Software reset is used; there is no external reset wire.
+Connect USB-C to your computer and the SWD cable to your target. Use the [custom firmware and OpenOCD configuration](https://github.com/tscircuit/standard-jst-programmer/tree/main/firmware). Software reset is used; there is no external reset wire.
 
 Before connecting target power, set `SW_PWR` to the labeled **3V3** or **5V** position. Disconnect the power cable before changing voltage. Both positions supply power; there is no OFF position. Leave the power cable unplugged when the target has another supply. Keep target consumption at or below 50 mA; this output has no dedicated current limiter.
 
