@@ -9,7 +9,10 @@ Original files:
 
 Changes: removed legacy WRL model references for conversion compatibility; converted to TSX with tsci; made mounting pads mechanical; specified connector insertion direction; removed long fabrication text; added application signal labels. Original copper geometry and pin numbering are preserved.
 
-The module footprint remains an external dependency, `@tsci/piuzera.RP2040_Zero@0.1.0`, generated from JLCPCB C5350143. The package does not declare a license; its files are not relicensed or vendored here.
+The discrete RP2040 support circuit and eight imported component definitions in `rp2040/` are adapted from `tscircuit/common`, revision `a5797da88ec19944442d87392174af0a36fe1a0a`:
+https://github.com/tscircuit/common/tree/a5797da88ec19944442d87392174af0a36fe1a0a/lib/Microcontroller_RP2040
+
+The original MIT license is retained at `rp2040/LICENSE`. Changes include local decoupling placement, regulator/core bypass capacitors, 1 kΩ BOOTSEL and crystal-drive resistors, explicit top-layer crystal routes, a bottom GND pour, and integration with the five-pin target interface. This is discrete circuitry; no RP2040 module is used.
 
 Firmware sources are fetched from raspberrypi/debugprobe (MIT) and raspberrypi/pico-sdk (BSD-3-Clause), with their dependencies and original license notices. The build uses the pinned upstream versions and applies the local board configuration. Their licenses govern the resulting firmware and remain in the fetched source trees.
 

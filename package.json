@@ -1,14 +1,27 @@
 {
   "name": "@tsci/tscircuit.standard-jst-programmer",
-  "version": "0.1.2",
-  "description": "Five-pin JST SH 1 mm SWD connectors and a USB-C RP2040 CMSIS-DAP programmer",
+  "version": "0.2.0",
+  "author": "tscircuit",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tscircuit/standard-jst-programmer.git"
+  },
   "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "devDependencies": {
+    "@types/node": "^26.6.1",
+    "tscircuit": "0.0.2572",
+    "typescript": "^5.0.0",
+    "@tscircuit/checks": "0.0.199"
+  },
+  "description": "Five-pin JST SH 1 mm SWD connectors and a USB-C RP2040 CMSIS-DAP programmer",
   "keywords": [
     "tscircuit",
     "circuit",
     "pcb",
     "electronics"
   ],
+  "license": "MIT",
   "scripts": {
     "dev": "tsci dev",
     "build": "tsci build",
@@ -18,20 +31,5 @@
     "typecheck": "tsc --noEmit",
     "test": "bun scripts/check-circuits.ts"
   },
-  "devDependencies": {
-    "@types/node": "^26.6.1",
-    "tscircuit": "0.0.2572",
-    "typescript": "^5.0.0"
-  },
-  "author": "tscircuit",
-  "dependencies": {
-    "@tsci/piuzera.RP2040_Zero": "^0.1.0"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tscircuit/standard-jst-programmer.git"
-  },
-  "module": "dist/index.js",
   "types": "dist/index.d.ts"
 }

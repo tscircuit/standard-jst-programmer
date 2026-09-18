@@ -28,7 +28,8 @@ p.write_text(p.read_text().replace('gpio_pull_up(PROBE_PIN_RESET);', 'gpio_disab
 PY
 cmake -S "$firmware_work/debugprobe" -B "$firmware_work/build" \
   -DPICO_SDK_PATH="$firmware_work/pico-sdk" \
-  -DPICO_BOARD=waveshare_rp2040_zero \
+  -DPICO_BOARD=standard_jst_programmer \
+  -DPICO_BOARD_HEADER_DIRS="$repo_root/firmware" \
   -DDEBUG_ON_PICO=OFF -DCMAKE_BUILD_TYPE=Release
 cmake --build "$firmware_work/build" --parallel 4
 mkdir -p "$repo_root/dist/firmware"

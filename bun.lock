@@ -4,10 +4,8 @@
   "workspaces": {
     "": {
       "name": "@tsci/seveibar.standard-jst-programmer",
-      "dependencies": {
-        "@tsci/piuzera.RP2040_Zero": "^0.1.0",
-      },
       "devDependencies": {
+        "@tscircuit/checks": "0.0.199",
         "@types/node": "^26.6.1",
         "tscircuit": "0.0.2572",
         "typescript": "^5.0.0",
@@ -156,8 +154,6 @@
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.63.3", "", { "os": "win32", "cpu": "x64" }, "sha512-+lIKX7O0+IGe7WuhATaAMMeT7B76vfhXH/l9wLQL+nvyhbw2ohYCKIdWL56JfDu75CWt5oKRP4QFH/jkMtBquA=="],
 
     "@thednp/dommatrix": ["@thednp/dommatrix@3.1.2", "", {}, "sha512-wxRH2/Qdqd+JxFpjb5vw+ZMaij8Hqa/9Hgl41n2Jb+3WNRhdemrosK0FxEo/yEvhvHGW8D1tZ3oPH9N0m1QG+A=="],
-
-    "@tsci/piuzera.RP2040_Zero": ["@tsci/piuzera.RP2040_Zero@0.1.0", "https://npm.tscircuit.com/package_files/download?package_name=piuzera%2Frp2040_zero&package_file_id=9421c819-45ba-4ff1-8cc5-c022c16b6630&package_release_version=0.1.0&file_path=dist%2Fpackage.tgz", {}, "sha512-+PGnb7MGIlRd1RGOi6i0X6gqHxwexKCo/RaN/UC2J0VT7Fj+Qn17KvfVTvOvjICTMpeZX6192ARepB2D+o0vBg=="],
 
     "@tscircuit/alphabet": ["@tscircuit/alphabet@0.0.25", "", { "peerDependencies": { "typescript": "^5.0.0" } }, "sha512-PWLjptI6AlLEtF/wjN1N8uC+n3G7vtg0j3xKE1fgWHDhahtnlQRqHDrtPSLlkIR9aJjRfjplzLuaUEaCRvJmZA=="],
 

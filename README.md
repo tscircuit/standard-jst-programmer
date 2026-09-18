@@ -8,9 +8,11 @@ This repository contains three circuits:
 | --- | --- | --- |
 | `circuits/upward.circuit.tsx` | Top-entry target connector (main preview) | JST BM05B-SRSS-TB(LF)(SN), JLCPCB C160391 |
 | `circuits/side.circuit.tsx` | Side-entry target connector | JST SM05B-SRSS-TB(LF)(SN), JLCPCB C136657 |
-| `circuits/programmer.circuit.tsx` | 42 × 34 mm programmer carrier | Waveshare RP2040-Zero with USB-C, JLCPCB C5350143 |
+| `circuits/programmer.circuit.tsx` | 46 × 70 mm discrete programmer | RP2040 QFN-56, USB-C, external flash and regulator |
 
-The programmer uses an assembled RP2040-Zero module, which supplies USB-C, the RP2040, flash, regulator, clock, and BOOT/RESET buttons. It is not a discrete RP2040 implementation.
+The programmer uses a **bare RP2040 QFN-56 chip**, a W25Q16JV 2 MiB QSPI flash, an AP2112K 3.3 V regulator, a 12 MHz crystal, and an onboard USB-C connector. All support components, BOOT/RUN buttons and LEDs are on this PCB.
+
+The discrete support circuit is adapted from [tscircuit/common's Microcontroller_RP2040](https://github.com/tscircuit/common/blob/a5797da88ec19944442d87392174af0a36fe1a0a/lib/Microcontroller_RP2040/Microcontroller_RP2040.circuit.tsx). The attributed source and part footprints are kept in `rp2040/` so the programmer can relocate decoupling, add regulator/core bypass capacitors, insert BOOTSEL/crystal series resistors, and explicitly route the crystal connections on the top layer. A bottom-layer GND pour provides additional return copper.
 
 ## Pinout
 
@@ -61,15 +63,19 @@ Replace `StandardJstSwdUpward` with `StandardJstSwdSide` for side entry. Compone
 Reset has a 10 kΩ pull-up to the **target** rail. The target rail has a 100 nF bypass capacitor. There is no level shifting, voltage sensing, automatic target-power detection, current limiting, or reverse-power protection. This version is for **3.3 V targets only**, not 1.8 V or 5 V.
 
 - **Default: JP_PWR open (no shunt).** Power the target separately at 3.3 V. Pin 1 provides its rail to the reset pull-up; it is not measured by firmware.
-- **Optional: JP_PWR closed.** The module's 3.3 V rail powers the target. Disconnect the target's other power sources before fitting the shunt. Use only small target loads; a conservative initial budget is 50 mA, subject to regulator temperature and hardware validation. This is an operating limit, not an enforced current limit.
+- **Optional: JP_PWR closed.** The onboard regulator's 3.3 V rail powers the target. Disconnect the target's other power sources before fitting the shunt. Use only small target loads; a conservative initial budget is 50 mA, subject to regulator temperature and hardware validation. This is an operating limit, not an enforced current limit.
 - Power both programmer and target before starting SWD. Do not leave an active probe driving an unpowered target or a powered target connected to an unpowered probe.
 - Use a short cable (start at ≤100 mm) and a 1 MHz SWD clock. Increase speed only after verifying reliable operation.
 
-The module footprint is surface-mount/castellated. Use the specified RP2040-Zero layout; similarly named modules can have different dimensions. USB-C access is at the top edge; JST cable access is at the right edge. Install JP_PWR as a two-pin header and leave the shunt off by default.
+USB-C access is at the top edge; JST cable access is at the left edge. Install JP_PWR as a two-pin header and leave the shunt off by default. Assembly includes fine-pitch QFN/WSON devices and 0402 passives. The layout uses 0.1 mm traces in dense areas; verify the fabrication stackup and the USB connector's mechanical requirements before fabrication.
+
+The four bottom test pads expose the **programmer RP2040's own** SWCLK, GND, SWDIO and 3.3 V for recovery. These are separate from the target-programming signals on the five-pin JST. SW_RUN resets the programmer; JST nRESET resets the target.
 
 ## Firmware and debugging
 
-`firmware/build.sh` builds Raspberry Pi **debugprobe (CMSIS-DAP)** at pinned commit `3fff5b240ca8200c7ad538cb61c02dfc39bda831` with Pico SDK commit `079c6f39023649b154152db30f1d781e884879bc` (includes the required `pico_usb_reset` API). Its custom board configuration enables GP2/GP3 SWD and GP1 open-drain reset, leaves the upstream CDC UART on unconnected GP4/GP5 (no UART in the cable), omits LED assignments, and disables the reset internal pull-up because the PCB provides a target-referenced pull-up.
+`firmware/standard_jst_programmer.h` is the dedicated Pico SDK board definition: RP2040, 12 MHz crystal, 2 MiB Winbond flash, conservative flash clock divider, and GP25 LED. No development-module board definition is used.
+
+`firmware/build.sh` builds Raspberry Pi **debugprobe (CMSIS-DAP)** at pinned commit `3fff5b240ca8200c7ad538cb61c02dfc39bda831` with Pico SDK commit `079c6f39023649b154152db30f1d781e884879bc` (includes the required `pico_usb_reset` API). Its custom board configuration enables GP2/GP3 SWD and GP1 open-drain reset, leaves the upstream CDC UART on unconnected GP4/GP5 (no UART in the cable), drives the status LED on GP25, and disables the reset internal pull-up because the PCB provides a target-referenced pull-up.
 
 Dependencies: Git, Python 3, CMake, an Arm GNU bare-metal toolchain (`arm-none-eabi-gcc`), and newlib including C++ support.
 
@@ -78,7 +84,7 @@ bash firmware/build.sh
 # Result: dist/firmware/standard-jst-programmer.uf2
 ```
 
-GitHub Actions builds the same UF2 and provides it as the `standard-jst-programmer-uf2` artifact. Do not use the stock Debug Probe UF2: its board pin configuration differs. Hold the RP2040-Zero's BOOT button while connecting USB (or hold BOOT and tap RESET), then copy the custom UF2 to the RPI-RP2 drive.
+GitHub Actions builds the same UF2 and provides it as the `standard-jst-programmer-uf2` artifact. Do not use the stock Debug Probe UF2: its board pin configuration differs. Hold SW_BOOT while connecting USB (or hold SW_BOOT and tap SW_RUN), then copy the custom UF2 to the RPI-RP2 drive.
 
 For an RP2040 target:
 
@@ -105,9 +111,9 @@ bun run test
 bun run dev
 ```
 
-The checks verify both connector pad/pin mappings, exactly five signal pins plus two mechanical mounting tabs, programmer SWD/reset connectivity, ground continuity, open-jumper power isolation, and absence of build/DRC error records. The routed board and generated schematic are inspected visually. CI separately compiles the custom firmware.
+The checks verify both connector pad/pin mappings, exactly five signal pins plus two mechanical mounting tabs, programmer SWD/reset connectivity, ground continuity, open-jumper power isolation, bare RP2040 supply separation, all six QSPI connections, both USB-C data orientations, CC pull-downs, BOOTSEL series resistance, and absence of build/DRC error records. The routed board and generated schematic are inspected visually. CI separately compiles the custom firmware.
 
-**Prototype status:** generated routing and software checks do not replace assembled hardware testing. No board has been manufactured or electrically tested for this revision. The module package lacks complete electrical pin metadata, so ERC cannot prove the whole electrical design. Validate the selected module, connector mechanical fit, power budget, and cable continuity before ordering a batch.
+**Prototype status:** generated routing and software checks do not replace assembled hardware testing. No board has been manufactured or electrically tested for this revision. The imported chip footprints lack complete electrical pin metadata, so ERC cannot prove the whole electrical design. Validate USB signal integrity, the oscillator, power budget, connector mechanical fit, and cable continuity before ordering a batch.
 
 ## Previews
 
@@ -118,9 +124,9 @@ The checks verify both connector pad/pin mappings, exactly five signal pins plus
 ## Sources
 
 - [JST SH datasheet](https://www.jst-mfg.com/product/pdf/eng/eSH.pdf)
-- [Waveshare RP2040-Zero documentation](https://www.waveshare.com/wiki/RP2040-Zero)
+- [tscircuit/common RP2040 source](https://github.com/tscircuit/common/tree/a5797da88ec19944442d87392174af0a36fe1a0a/lib/Microcontroller_RP2040)
+- [Raspberry Pi RP2040 hardware design guide](https://datasheets.raspberrypi.com/rp2040/hardware-design-with-rp2040.pdf)
 - [Raspberry Pi debugprobe firmware](https://github.com/raspberrypi/debugprobe)
 - [KiCad JST footprints](https://github.com/KiCad/kicad-footprints/tree/master/Connector_JST.pretty)
-- [Module tscircuit package](https://tscircuit.com/piuzera/RP2040_Zero)
 
 See [THIRD_PARTY.md](THIRD_PARTY.md) for footprint attribution.
