@@ -297,6 +297,13 @@ assert.equal(compactBoard.width, 26);
 assert.equal(compactBoard.height, 42);
 assert.equal(compactBoard.num_layers, 4);
 assert(
+  compact.filter((e) => e.type === "pcb_via").every((via) =>
+    ["top", "inner1", "inner2", "bottom"].every((layer) => via.layers.includes(layer)),
+  ),
+  "all programmer vias must be through vias across all four copper layers",
+);
+
+assert(
   compact
     .filter((e) => e.type === "pcb_component")
     .every((e) => e.layer === "top"),

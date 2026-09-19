@@ -1,3 +1,5 @@
+import { RoutedTrace } from "./routing/RoutedTrace";
+import { ProgrammerFinishingTraces } from "./routing/ProgrammerFinishingTraces";
 import { TagConnectIdcHeader } from "./footprints/TagConnectIdcHeader";
 import { INA219AIDCNR } from "./footprints/INA219AIDCNR";
 import { XL_1615RGBC_2812B_S } from "./footprints/XL_1615RGBC_2812B_S";
@@ -39,6 +41,8 @@ export function ProgrammerBoard({
         minViaPadDiameter={0.45}
         minViaHoleDiameter={0.2}
       >
+        <ProgrammerFinishingTraces />
+        <net name="SWCLK" routingPhaseIndex={1} />
         <schematicsection name="target" displayName="Target SWD" />
         <StandardJstSwdSide
           name="J1"
@@ -100,28 +104,29 @@ export function ProgrammerBoard({
           schY={6}
           schSectionName="target"
         />
-        <trace
+        <RoutedTrace
           name="T1"
           from=".U1 > .GPIO2"
           to=".R_CLK > .pin1"
           thickness={0.1}
         />
-        <trace name="T2" from=".R_CLK > .pin2" to=".J1 > .SWCLK" />
-        <trace
+        <RoutedTrace name="T2" from=".R_CLK > .pin2" to="net.SWCLK" />
+        <RoutedTrace from=".J1 > .SWCLK" to="net.SWCLK" />
+        <RoutedTrace
           name="T3"
           from=".U1 > .GPIO3"
           to=".R_DIO > .pin1"
           thickness={0.1}
         />
-        <trace name="T4" from=".R_DIO > .pin2" to=".J1 > .SWDIO" />
-        <trace from=".J1 > .GND" to="net.GND" />
-        <trace from=".J2 > .GND" to="net.GND" />
-        <trace from=".J2 > .VOUT" to="net.TARGET_POWER" />
-        <trace from=".C_TARGET > .pin1" to="net.TARGET_POWER" />
-        <trace from=".C_TARGET > .pin2" to="net.GND" />
-        <trace from=".SW_PWR > .pin2" to="net.SELECTED_POWER" />
-        <trace from=".SW_PWR > .pin3" to="net.VBUS" />
-        <trace from=".SW_PWR > .pin1" to="net.V3V3" />
+        <RoutedTrace name="T4" from=".R_DIO > .pin2" to=".J1 > .SWDIO" />
+        <RoutedTrace from=".J1 > .GND" to="net.GND" />
+        <RoutedTrace from=".J2 > .GND" to="net.GND" />
+        <RoutedTrace from=".J2 > .VOUT" to="net.TARGET_POWER" />
+        <RoutedTrace from=".C_TARGET > .pin1" to="net.TARGET_POWER" />
+        <RoutedTrace from=".C_TARGET > .pin2" to="net.GND" />
+        <RoutedTrace from=".SW_PWR > .pin2" to="net.SELECTED_POWER" />
+        <RoutedTrace from=".SW_PWR > .pin3" to="net.VBUS" />
+        <RoutedTrace from=".SW_PWR > .pin1" to="net.V3V3" />
         <StandardJstSwdResetSide
           name="J3"
           pcbX={6.1}
@@ -141,27 +146,27 @@ export function ProgrammerBoard({
           schY={-8}
           schSectionName="target"
         />
-        <trace
+        <RoutedTrace
           name="NRST_GPIO"
           from=".U1 > .GPIO1"
           to=".R_NRST > .pin1"
           thickness={0.1}
         />
-        <trace
+        <RoutedTrace
           name="NRST_TARGET"
           from=".R_NRST > .pin2"
           to=".J3 > .NRST"
           thickness={0.1}
         />
-        <trace from=".J3 > .VOUT" to="net.TARGET_POWER" />
-        <trace
+        <RoutedTrace from=".J3 > .VOUT" to="net.TARGET_POWER" />
+        <RoutedTrace
           name="SWCLK_PORTS"
-          from=".J1 > .SWCLK"
-          to=".J3 > .SWCLK"
+          from=".J3 > .SWCLK"
+          to="net.SWCLK"
           thickness={0.15}
         />
-        <trace from=".J3 > .SWDIO" to=".J1 > .SWDIO" />
-        <trace from=".J3 > .GND" to="net.GND" />
+        <RoutedTrace from=".J3 > .SWDIO" to=".J1 > .SWDIO" />
+        <RoutedTrace from=".J3 > .GND" to="net.GND" />
 
         <TagConnectIdcHeader
           name="J4"
@@ -173,31 +178,136 @@ export function ProgrammerBoard({
           schSectionName="target"
           noConnect={["SWO"]}
         />
-        <trace from=".J4 > .VOUT" to=".J3 > .VOUT" />
-        <trace from=".J4 > .SWDIO" to=".R_DIO > .pin2" />
-        <trace from=".J4 > .NRST" to=".R_NRST > .pin2" />
-        <trace from=".J4 > .SWCLK" to=".J3 > .SWCLK" />
-        <trace from=".J4 > .GND" to=".C_RGB > .pin2" />
+        <RoutedTrace from=".J4 > .VOUT" to="net.TARGET_POWER" />
+        <RoutedTrace from=".J4 > .SWDIO" to=".R_DIO > .pin2" />
+        <RoutedTrace from=".J4 > .NRST" to=".R_NRST > .pin2" />
+        <RoutedTrace from=".J4 > .SWCLK" to="net.SWCLK" />
+        <RoutedTrace from=".J4 > .GND" to="net.GND" />
         <silkscreentext
-          text="TAG 1:VOUT 2:DIO"
+          text="TAG IDC"
           pcbX={0}
-          pcbY={8}
+          pcbY={20.2}
           layer="bottom"
-          fontSize={0.8}
+          fontSize={1}
         />
         <silkscreentext
-          text="3:NRST 4:CLK"
+          text="1 VOUT / 2 DIO"
           pcbX={0}
-          pcbY={6.5}
+          pcbY={18.6}
           layer="bottom"
-          fontSize={0.8}
+          fontSize={0.9}
         />
         <silkscreentext
-          text="5:GND 6:NC"
+          text="3 NRST / 4 CLK"
           pcbX={0}
-          pcbY={5}
+          pcbY={17.5}
           layer="bottom"
-          fontSize={0.8}
+          fontSize={0.9}
+        />
+        <silkscreentext
+          text="5 GND / 6 NC"
+          pcbX={0}
+          pcbY={14.9}
+          layer="bottom"
+          fontSize={0.9}
+        />
+        <silkscreentext
+          text="SWD LOGIC: 3.3V"
+          pcbX={0}
+          pcbY={-12.9}
+          layer="bottom"
+          fontSize={1}
+        />
+        <silkscreentext
+          text="JST SWD"
+          pcbX={-8.5}
+          pcbY={-15}
+          layer="bottom"
+          fontSize={1}
+        />
+        <silkscreentext
+          text="1 CLK"
+          pcbX={-8.5}
+          pcbY={-16.5}
+          layer="bottom"
+          fontSize={1}
+        />
+        <silkscreentext
+          text="2 GND"
+          pcbX={-8.5}
+          pcbY={-18}
+          layer="bottom"
+          fontSize={1}
+        />
+        <silkscreentext
+          text="3 DIO"
+          pcbX={-8.5}
+          pcbY={-19.5}
+          layer="bottom"
+          fontSize={1}
+        />
+        <silkscreentext
+          text="POWER"
+          pcbX={-1.8}
+          pcbY={-15}
+          layer="bottom"
+          fontSize={1}
+        />
+        <silkscreentext
+          text="1 VOUT"
+          pcbX={-1.8}
+          pcbY={-16.5}
+          layer="bottom"
+          fontSize={1}
+        />
+        <silkscreentext
+          text="2 GND"
+          pcbX={-1.8}
+          pcbY={-18}
+          layer="bottom"
+          fontSize={1}
+        />
+        <silkscreentext
+          text="JST 5PIN"
+          pcbX={6.1}
+          pcbY={-15.2}
+          layer="bottom"
+          fontSize={0.9}
+        />
+        <silkscreentext
+          text="1 VOUT"
+          pcbX={6.1}
+          pcbY={-16.3}
+          layer="bottom"
+          fontSize={0.85}
+        />
+        <silkscreentext
+          text="2 DIO"
+          pcbX={6.1}
+          pcbY={-17.25}
+          layer="bottom"
+          fontSize={0.85}
+        />
+        <silkscreentext
+          text="3 GND"
+          pcbX={6.1}
+          pcbY={-18.2}
+          layer="bottom"
+          fontSize={0.85}
+        />
+        <silkscreentext
+          text="4 CLK"
+          pcbX={6.1}
+          pcbY={-19.15}
+          layer="bottom"
+          fontSize={0.85}
+        />
+        <silkscreentext
+          text="5 NRST"
+          pcbX={6.1}
+          pcbY={-20.1}
+          layer="bottom"
+          fontSize={0.85}
         />
         <silkscreentext text="TAG" pcbX={9.5} pcbY={-4.3} fontSize={0.7} />
         <INA219AIDCNR
@@ -246,31 +356,31 @@ export function ProgrammerBoard({
           schX={-24}
           schY={11}
         />
-        <trace from=".R_SHUNT > .pin1" to="net.SELECTED_POWER" />
-        <trace from=".R_SHUNT > .pin2" to="net.TARGET_POWER" />
-        <trace
+        <RoutedTrace from=".R_SHUNT > .pin1" to="net.SELECTED_POWER" />
+        <RoutedTrace from=".R_SHUNT > .pin2" to="net.TARGET_POWER" />
+        <RoutedTrace
           from=".U_SENSE > .IN_POS"
-          to=".R_SHUNT > .pin1"
+          to="net.SELECTED_POWER"
           thickness={0.15}
         />
-        <trace
+        <RoutedTrace
           from=".U_SENSE > .IN_NEG"
-          to=".R_SHUNT > .pin2"
+          to="net.TARGET_POWER"
           thickness={0.15}
         />
-        <trace from=".U_SENSE > .VS" to="net.V3V3" />
-        <trace from=".U_SENSE > .GND" to="net.GND" />
+        <RoutedTrace from=".U_SENSE > .VS" to="net.V3V3" />
+        <RoutedTrace from=".U_SENSE > .GND" to="net.GND" />
 
-        <trace from=".U_SENSE > .A0" to="net.GND" />
-        <trace from=".U_SENSE > .A1" to="net.GND" />
-        <trace from=".U_SENSE > .SDA" to=".U1 > .GPIO18" />
-        <trace from=".U_SENSE > .SCL" to=".U1 > .GPIO19" />
-        <trace from=".R_SDA > .pin1" to=".U_SENSE > .SDA" />
-        <trace from=".R_SDA > .pin2" to="net.V3V3" />
-        <trace from=".R_SCL > .pin1" to=".U_SENSE > .SCL" />
-        <trace from=".R_SCL > .pin2" to="net.V3V3" />
-        <trace from=".C_SENSE > .pin1" to="net.V3V3" />
-        <trace from=".C_SENSE > .pin2" to="net.GND" />
+        <RoutedTrace from=".U_SENSE > .A0" to="net.GND" />
+        <RoutedTrace from=".U_SENSE > .A1" to="net.GND" />
+        <RoutedTrace from=".U_SENSE > .SDA" to=".U1 > .GPIO18" />
+        <RoutedTrace from=".U_SENSE > .SCL" to=".U1 > .GPIO19" />
+        <RoutedTrace from=".R_SDA > .pin1" to=".U_SENSE > .SDA" />
+        <RoutedTrace from=".R_SDA > .pin2" to="net.V3V3" />
+        <RoutedTrace from=".R_SCL > .pin1" to=".U_SENSE > .SCL" />
+        <RoutedTrace from=".R_SCL > .pin2" to="net.V3V3" />
+        <RoutedTrace from=".C_SENSE > .pin1" to="net.V3V3" />
+        <RoutedTrace from=".C_SENSE > .pin2" to="net.GND" />
 
         <XL_1615RGBC_2812B_S
           name="D_RGB"
@@ -324,20 +434,20 @@ export function ProgrammerBoard({
           schX={12}
           schY={-15}
         />
-        <trace from=".U1 > .GPIO25" to=".U_RGB > .A" />
-        <trace from=".R_RGB_PD > .pin1" to=".U_RGB > .A" />
-        <trace from=".R_RGB_PD > .pin2" to="net.GND" />
-        <trace from=".U_RGB > .N_OE" to="net.GND" />
-        <trace from=".U_RGB > .GND" to="net.GND" />
-        <trace from=".U_RGB > .VCC" to="net.VBUS" />
-        <trace from=".U_RGB > .Y" to=".R_RGB > .pin1" />
-        <trace from=".R_RGB > .pin2" to=".D_RGB > .DI" />
-        <trace from=".D_RGB > .VDD" to="net.VBUS" />
-        <trace from=".D_RGB > .GND" to="net.GND" />
-        <trace from=".C_RGB > .pin1" to="net.VBUS" />
-        <trace from=".C_RGB > .pin2" to="net.GND" />
-        <trace from=".C_RGB_BUF > .pin1" to="net.VBUS" />
-        <trace from=".C_RGB_BUF > .pin2" to="net.GND" />
+        <RoutedTrace from=".U1 > .GPIO25" to=".U_RGB > .A" />
+        <RoutedTrace from=".R_RGB_PD > .pin1" to=".U_RGB > .A" />
+        <RoutedTrace from=".R_RGB_PD > .pin2" to="net.GND" />
+        <RoutedTrace from=".U_RGB > .N_OE" to="net.GND" />
+        <RoutedTrace from=".U_RGB > .GND" to="net.GND" />
+        <RoutedTrace from=".U_RGB > .VCC" to="net.VBUS" />
+        <RoutedTrace from=".U_RGB > .Y" to=".R_RGB > .pin1" />
+        <RoutedTrace from=".R_RGB > .pin2" to=".D_RGB > .DI" />
+        <RoutedTrace from=".D_RGB > .VDD" to="net.VBUS" />
+        <RoutedTrace from=".D_RGB > .GND" to="net.GND" />
+        <RoutedTrace from=".C_RGB > .pin1" to="net.VBUS" />
+        <RoutedTrace from=".C_RGB > .pin2" to="net.GND" />
+        <RoutedTrace from=".C_RGB_BUF > .pin1" to="net.VBUS" />
+        <RoutedTrace from=".C_RGB_BUF > .pin2" to="net.GND" />
         <silkscreentext text="5V" pcbX={-10.5} pcbY={-1.6} fontSize={0.9} />
         <silkscreentext text="3V3" pcbX={-10.5} pcbY={-12.2} fontSize={0.9} />
         <silkscreentext text="SWD" pcbX={-8.5} pcbY={-13} fontSize={0.7} />
