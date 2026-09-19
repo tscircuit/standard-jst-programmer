@@ -992,9 +992,9 @@
       {"route_type": "wire","x": 0.03900990420303055,"y": -8.346880833785365,"width": 0.15,"layer": "inner1"},
       {"route_type": "wire","x": 0.03900990420303055,"y": -7.940101172768417,"width": 0.15,"layer": "inner1"},
       {"route_type": "wire","x": -0.3677697568139185,"y": -7.940101172768417,"width": 0.15,"layer": "inner1"},
-      {"route_type": "wire","x": -0.7745494178308676,"y": -7.940101172768417,"width": 0.15,"layer": "inner1"},
-      {"route_type": "via","x": -0.7745494178308676,"y": -7.940101172768417,"from_layer": "inner1","to_layer": "top","via_diameter": 0.45,"via_hole_diameter": 0.2},
-      {"route_type": "wire","x": -0.7745494178308676,"y": -7.940101172768417,"width": 0.15,"layer": "top"},
+      {"route_type": "wire","x": -1.2745494178308674,"y": -7.040101172768416,"width": 0.15,"layer": "inner1"},
+      {"route_type": "via","x": -1.2745494178308674,"y": -7.040101172768416,"from_layer": "inner1","to_layer": "top","via_diameter": 0.45,"via_hole_diameter": 0.2},
+      {"route_type": "wire","x": -1.2745494178308674,"y": -7.040101172768416,"width": 0.15,"layer": "top"},
       {"route_type": "wire","x": -0.8500000000000002,"y": -8.1,"width": 0.15,"layer": "top"}
     ]
   },
@@ -1228,18 +1228,18 @@
     "route": [
       {"route_type": "wire","x": 0.8500000000000002,"y": -5.9,"width": 0.1,"layer": "top"},
       {"route_type": "wire","x": 0.7551578369990732,"y": -5.869178502568178,"width": 0.1,"layer": "top"},
-      {"route_type": "wire","x": 0.653892014214263,"y": -5.869178502568178,"width": 0.1,"layer": "top"},
-      {"route_type": "via","x": 0.653892014214263,"y": -5.869178502568178,"from_layer": "top","to_layer": "inner2","via_diameter": 0.45,"via_hole_diameter": 0.2},
-      {"route_type": "wire","x": 0.653892014214263,"y": -5.869178502568178,"width": 0.1,"layer": "inner2"},
+      {"route_type": "wire","x": 1.8538920142142634,"y": -5.869178502568178,"width": 0.1,"layer": "top"},
+      {"route_type": "via","x": 1.8538920142142634,"y": -5.869178502568178,"from_layer": "top","to_layer": "inner2","via_diameter": 0.45,"via_hole_diameter": 0.2},
+      {"route_type": "wire","x": 1.8538920142142634,"y": -5.869178502568178,"width": 0.1,"layer": "inner2"},
       {"route_type": "wire","x": 0.5019932800370479,"y": -6.122343059530204,"width": 0.1,"layer": "inner2"},
       {"route_type": "wire","x": 0.5019932800370479,"y": -6.527406350669444,"width": 0.1,"layer": "inner2"},
       {"route_type": "wire","x": 0.09692998889780736,"y": -6.527406350669444,"width": 0.1,"layer": "inner2"},
       {"route_type": "wire","x": 0.09692998889780736,"y": -6.932469641808685,"width": 0.1,"layer": "inner2"},
       {"route_type": "wire","x": -0.308133302241433,"y": -6.932469641808685,"width": 0.1,"layer": "inner2"},
       {"route_type": "wire","x": -0.308133302241433,"y": -7.337532932947925,"width": 0.1,"layer": "inner2"},
-      {"route_type": "wire","x": -0.7131965933806733,"y": -7.337532932947925,"width": 0.1,"layer": "inner2"},
-      {"route_type": "via","x": -0.7131965933806733,"y": -7.337532932947925,"from_layer": "inner2","to_layer": "top","via_diameter": 0.45,"via_hole_diameter": 0.2},
-      {"route_type": "wire","x": -0.7131965933806733,"y": -7.337532932947925,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -0.6131965933806731,"y": -7.037532932947925,"width": 0.1,"layer": "inner2"},
+      {"route_type": "via","x": -0.6131965933806731,"y": -7.037532932947925,"from_layer": "inner2","to_layer": "top","via_diameter": 0.45,"via_hole_diameter": 0.2},
+      {"route_type": "wire","x": -0.6131965933806731,"y": -7.037532932947925,"width": 0.1,"layer": "top"},
       {"route_type": "wire","x": -0.7131965933806733,"y": -7.7425962240871655,"width": 0.1,"layer": "top"},
       {"route_type": "wire","x": -0.8500000000000002,"y": -8.1,"width": 0.1,"layer": "top"}
     ]

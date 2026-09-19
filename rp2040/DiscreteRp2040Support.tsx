@@ -84,57 +84,14 @@ export const DiscreteRp2040Support = ({
       minTraceToPadEdgeClearance={0.16}
       minViaEdgeToPadEdgeClearance={0.25}
     />
-    {/* Keep selected traces available to their later explicit finishing phases. */}
+    {/* Explicit finishing paths already own their connections; route only the rest. */}
     <autoroutingphase
       name="core-and-debug"
       phaseIndex={2}
-      reroute
+      connections={[]}
       minTraceToPadEdgeClearance={0.16}
       minViaEdgeToPadEdgeClearance={0.25}
       minViaHoleEdgeToViaHoleEdgeClearance={0.4}
-      connections={[
-        "U_SENSE.IN_POS",
-        "U_SENSE.IN_NEG",
-        "U_SENSE.GND",
-        "J4.VOUT",
-        "J4.GND",
-        "Y1.pin2",
-        "Y1.pin4",
-        "U1.USB_VDD",
-        "D_PWR.anode",
-        "U1.QSPI_SS",
-        "U1.QSPI_SCLK",
-        "U1.QSPI_SD0",
-        "U1.QSPI_SD1",
-        "U1.QSPI_SD2",
-        "U1.QSPI_SD3",
-        "U1.USB_DM",
-        "U1.USB_DP",
-        "R_USB1.pin1",
-        "R_USB2.pin1",
-        "U1.GPIO25",
-        "U_RGB.A",
-        "U1.GPIO18",
-        "U1.GPIO19",
-        "U_SENSE.SDA",
-        "U_SENSE.SCL",
-        "U1.RUN",
-        "U3.EN",
-        "J_USB.A5",
-        "J_USB.B5",
-        "U1.GPIO1",
-        "U1.GPIO2",
-        "U1.GPIO3",
-        "J1.SWCLK",
-        "J1.SWDIO",
-        "J3.NRST",
-        "J4.SWCLK",
-        "J4.SWDIO",
-        "J4.NRST",
-        "SW_BOOT.pin1",
-        "U_RGB.Y",
-        "R_RGB.pin2",
-      ]}
     />
     <autoroutingphase
       name="remaining"

@@ -292,6 +292,29 @@ assert.equal(new Set(positions).size, 3, "preview: separate board positions");
 console.log("Three-board preview and JST CAD checks passed");
 
 const compact = load("programmer");
+// Ground vias must escape the crystal solder lands rather than wick solder.
+for (const design of [compact, preview]) {
+  const crystalSourceIds = new Set(design.filter((e) =>
+    e.type === "source_component" && e.name === "Y1",
+  ).map((e) => e.source_component_id));
+  const crystalPcbIds = new Set(design.filter((e) =>
+    e.type === "pcb_component" && crystalSourceIds.has(e.source_component_id),
+  ).map((e) => e.pcb_component_id));
+  const crystalPads = design.filter((e) =>
+    e.type === "pcb_smtpad" && crystalPcbIds.has(e.pcb_component_id),
+  );
+  assert.equal(crystalPads.length, 4, "crystal has four solder lands");
+  for (const via of design.filter((e) => e.type === "pcb_via")) {
+    for (const pad of crystalPads) {
+      const distance = Math.hypot(
+        Math.max(Math.abs(via.x - pad.x) - pad.width / 2, 0),
+        Math.max(Math.abs(via.y - pad.y) - pad.height / 2, 0),
+      );
+      assert(distance - via.outer_diameter / 2 > 0,
+        "crystal via copper must not overlap solder lands");
+    }
+  }
+}
 const compactBoard = compact.find((e) => e.type === "pcb_board");
 assert.equal(compactBoard.width, 26);
 assert.equal(compactBoard.height, 42);

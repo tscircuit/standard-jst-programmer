@@ -524,6 +524,32 @@
     ]
   },
   {
+    "from": ".R_PWR_LED > .pin2",
+    "to": ".D_PWR > .anode",
+    "connection": "R_PWR_LED.pin2",
+    "route": [
+      {"route_type": "wire","x": -10.49,"y": 18,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -10.408172463181238,"y": 18.116294203656665,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -8.024389992279453,"y": 18.13278285034374,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -7.832972963526589,"y": 18.08197296352659,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -7.251,"y": 17.5,"width": 0.1,"layer": "top"}
+    ]
+  },
+  {
+    "from": ".U1 > .GPIO2",
+    "to": ".R_CLK > .pin1",
+    "connection": "U1.pin4",
+    "route": [
+      {"route_type": "wire","x": -3.42495,"y": 1.90035,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -4.639044862308525,"y": 1.90035,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -5.19457514075232,"y": 1.3448197215562043,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -5.256099662070614,"y": 1.2550017270019675,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -6.41841291011524,"y": 1.2550017270019675,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -6.4932952002379105,"y": 1.283295200237911,"width": 0.1,"layer": "top"},
+      {"route_type": "wire","x": -7.01,"y": 1.8,"width": 0.1,"layer": "top"}
+    ]
+  },
+  {
     "from": ".U1 > .GPIO3",
     "to": ".R_DIO > .pin1",
     "connection": "U1.pin5",
@@ -843,6 +869,26 @@
       {"route_type": "wire","x": 7.790000000000001,"y": -1.5,"width": 0.15,"layer": "top"},
       {"route_type": "wire","x": 8.5,"y": -0.7900000000000009,"width": 0.15,"layer": "top"},
       {"route_type": "wire","x": 8.5,"y": -0.09994700000000001,"width": 0.15,"layer": "top"}
+    ]
+  },
+  {
+    "from": ".U_RGB > .Y",
+    "to": ".R_RGB > .pin1",
+    "connection": "U_RGB.pin4",
+    "route": [
+      {"route_type": "wire","x": 9.149986,"y": 2.0999470000000002,"width": 0.15,"layer": "top"},
+      {"route_type": "wire","x": 9.75,"y": 1.5,"width": 0.15,"layer": "top"},
+      {"route_type": "wire","x": 10.49,"y": 1.5,"width": 0.15,"layer": "top"}
+    ]
+  },
+  {
+    "from": ".R_RGB > .pin2",
+    "to": ".D_RGB > .DI",
+    "connection": "R_RGB.pin2",
+    "route": [
+      {"route_type": "wire","x": 11.51,"y": 1.5,"width": 0.15,"layer": "top"},
+      {"route_type": "wire","x": 11.51,"y": 3.139987,"width": 0.15,"layer": "top"},
+      {"route_type": "wire","x": 11.1249924,"y": 3.5249946,"width": 0.15,"layer": "top"}
     ]
   }
 ]

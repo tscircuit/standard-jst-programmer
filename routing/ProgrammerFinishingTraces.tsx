@@ -7,8 +7,8 @@ const signalTracePaths = signalPaths.map((path) => fanoutTracePath.parse(path));
 
 /**
  * Checked copper paths in programmer-local millimetres (+X right, +Y up).
- * Power/SWCLK are placed first. Individual signal phases then replace only
- * the default router connections that needed finishing. Each signal phase
+ * Power/SWCLK are placed first. The default router handles unsaved connections;
+ * individual signal phases then apply the checked finishing paths. Each phase
  * binds through RoutedTrace, including when its endpoint is a shared junction.
  */
 export function ProgrammerFinishingTraces() {
