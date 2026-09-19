@@ -1,6 +1,6 @@
-import UpwardBoard from "./circuits/upward.circuit"
-import SideBoard from "./circuits/side.circuit"
-import { ProgrammerBoard } from "./programmer"
+import UpwardBoard from "./circuits/upward.circuit";
+import SideBoard from "./circuits/side.circuit";
+import { ProgrammerBoard } from "./programmer";
 
 /** Display panel: the three standalone circuits are the fabrication outputs.
  * Placement DRC is run on each standalone circuit. The current panel checker
@@ -9,10 +9,15 @@ import { ProgrammerBoard } from "./programmer"
  */
 export default function Preview() {
   return (
-    <panel layoutMode="none" width={52} height={54} panelizationMethod="outline_routing">
+    <panel
+      layoutMode="none"
+      width={52}
+      height={74}
+      panelizationMethod="outline_routing"
+    >
       <ProgrammerBoard previewPlacement />
-      <UpwardBoard placementDrcChecksDisabled pcbX={14} pcbY={13} />
-      <SideBoard placementDrcChecksDisabled pcbX={14} pcbY={-13} />
+      <UpwardBoard placementDrcChecksDisabled pcbX={14} pcbY={18} />
+      <SideBoard placementDrcChecksDisabled pcbX={14} pcbY={-18} />
     </panel>
-  )
+  );
 }

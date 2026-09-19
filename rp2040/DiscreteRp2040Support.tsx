@@ -1,4 +1,3 @@
-import { lockedProgrammerRoutes } from "../routing/locked";
 // Adapted from tscircuit/common @ a5797da88ec19944442d87392174af0a36fe1a0a.
 // MIT license retained in ./LICENSE. Discrete components, not a module.
 import type { ReactNode } from "react";
@@ -55,6 +54,14 @@ export const DiscreteRp2040Support = ({
   ...props
 }: MicrocontrollerRP2040Props) => (
   <subcircuit name={name} {...props}>
+    <net name="GND" routingPhaseIndex={1} />
+    <net name="VBUS" routingPhaseIndex={1} />
+    <net name="VSYS" routingPhaseIndex={1} />
+    <net name="V3V3" routingPhaseIndex={1} />
+    <net name="V1V1" routingPhaseIndex={1} />
+    <net name="ADC_VREF" routingPhaseIndex={1} />
+    <net name="TARGET_POWER" routingPhaseIndex={1} />
+    <net name="SELECTED_POWER" routingPhaseIndex={1} />
     <schematicsection
       name={schSections.rp2040(name)}
       displayName="RP2040 & Power"
@@ -70,12 +77,61 @@ export const DiscreteRp2040Support = ({
     />
 
     <autoroutingphase
-      name="crystal-signals"
+      name="crystal"
       phaseIndex={0}
-      connections={["Y1.X1", "Y1.X2"]}
+      connections={["Y1.X1", "Y1.X2", "R_XOSC.pin1", "R_XOSC.pin2"]}
+      minTraceToPadEdgeClearance={0.16}
+      minViaEdgeToPadEdgeClearance={0.25}
     />
-
-    <autoroutingphase autorouter={{algorithmFn: lockedProgrammerRoutes}} name="remaining" minTraceToPadEdgeClearance={0.12} minViaEdgeToPadEdgeClearance={0.2} minBoardEdgeClearance={0.3} />
+    {/* Route dense MCU, power, and target connections together so later
+        stages do not trap an unrouted pin behind already-fixed copper. */}
+    <autoroutingphase
+      name="core-and-debug"
+      phaseIndex={1}
+      minTraceToPadEdgeClearance={0.16}
+      minViaEdgeToPadEdgeClearance={0.25}
+      minViaHoleEdgeToViaHoleEdgeClearance={0.4}
+      connections={[
+        "U1.USB_DM",
+        "U1.USB_DP",
+        "R_USB1.pin1",
+        "R_USB2.pin1",
+        "U1.QSPI_SS",
+        "U1.QSPI_SCLK",
+        "U1.QSPI_SD0",
+        "U1.QSPI_SD1",
+        "U1.QSPI_SD2",
+        "U1.QSPI_SD3",
+        "U1.GPIO25",
+        "U_RGB.A",
+        "U1.GPIO18",
+        "U1.GPIO19",
+        "U_SENSE.SDA",
+        "U_SENSE.SCL",
+        "U1.RUN",
+        "U3.EN",
+        "J_USB.A5",
+        "J_USB.B5",
+        "U1.GPIO1",
+        "U1.GPIO2",
+        "U1.GPIO3",
+        "J1.SWCLK",
+        "J1.SWDIO",
+        "J3.NRST",
+        "J4.SWCLK",
+        "J4.SWDIO",
+        "J4.NRST",
+        "SW_BOOT.pin1",
+        "U_RGB.Y",
+        "R_RGB.pin2",
+      ]}
+    />
+    <autoroutingphase
+      name="remaining"
+      minTraceToPadEdgeClearance={0.16}
+      minViaEdgeToPadEdgeClearance={0.25}
+      minViaHoleEdgeToViaHoleEdgeClearance={0.4}
+    />
 
     <trace name="Y1_G1" from=".Y1 > .pin2" to="net.GND" {...gndLabel} />
     <trace name="Y1_G2" from=".Y1 > .pin4" to="net.GND" {...gndLabel} />
@@ -164,7 +220,7 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
-      pcbX={3}
+      pcbX={2.9}
       pcbY={-5}
       schX={-6.2}
       schY={-6.4}
@@ -391,7 +447,7 @@ export const DiscreteRp2040Support = ({
       pcbY={-8}
       schX={1.2}
       schY={-12.5}
-      pcbRotation={180}
+      pcbRotation={0}
     />
     <SKRPACE010
       name="SW_BOOT"
@@ -404,9 +460,9 @@ export const DiscreteRp2040Support = ({
     <SKRPACE010
       name="SW_RUN"
       schSectionName={schSections.controls(name)}
-      pcbX={8.5}
-      pcbY={-7.5}
-      pcbRotation={90}
+      pcbX={9}
+      pcbY={17.5}
+      pcbRotation={0}
       schX={12.8}
       schY={-12}
     />
@@ -544,7 +600,7 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.clock(name)}
       schOrientation="vertical"
-      pcbX={0}
+      pcbX={-5.5}
       pcbY={-8}
       schX={0.4}
       schY={-14.2}
@@ -556,7 +612,7 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.clock(name)}
       schOrientation="vertical"
-      pcbX={-5.5}
+      pcbX={0}
       pcbY={-8}
       schX={2.2}
       schY={-14.2}
@@ -585,19 +641,6 @@ export const DiscreteRp2040Support = ({
     <trace
       {...denseTraceProps}
       name="QSPI_SD0"
-      pcbPath={[
-        ".U1 > .QSPI_SD0",
-        { x: -1.40035, y: 3.8656 },
-        { x: -1.564, y: 4.2154 },
-        { x: -1.564, y: 4.2154, via: true, fromLayer: "top", toLayer: "bottom" },
-        { x: -1.564, y: 4.2154 },
-        { x: -4.3, y: 10.9 },
-        { x: -4.3, y: 10.9, via: true, fromLayer: "bottom", toLayer: "top" },
-        { x: -4.3, y: 10.9 },
-        { x: -5.5, y: 10.5 },
-        { x: -5.5, y: 9.75 },
-        ".U2 > .pin5",
-      ]}
       from=".U1 > .QSPI_SD0"
       to=".U2 > .pin5"
       schDisplayLabel="QSPI_SD0"
@@ -809,7 +852,7 @@ export const DiscreteRp2040Support = ({
       {...adcRefLabel}
     />
     <trace
-      name="ADC_AVDD"
+      name="ADC_POWER"
       from=".U1 > .ADC_AVDD"
       to="net.ADC_VREF"
       {...adcRefLabel}
@@ -818,44 +861,20 @@ export const DiscreteRp2040Support = ({
     <trace name="FLSH_VCC" from=".U2 > .VCC" to="net.V3V3" {...v3v3Label} />
     <trace name="FLSH_EP" from=".U2 > .EP" to="net.GND" {...gndLabel} />
 
-    <trace
-      name="XIN"
-      from=".U1 > .XIN"
-      to=".Y1 > .X1"
-      thickness="0.1mm"
-      pcbPath={[
-        ".U1 > .XIN",
-        { x: -0.60015, y: -4.8 },
-        { x: -1.7, y: -5.9 },
-        ".Y1 > .X1",
-      ]}
-    />
+    <trace name="XIN" from=".U1 > .XIN" to=".Y1 > .X1" thickness="0.1mm" />
     <trace
       name="XOUT"
       from=".Y1 > .X2"
       to=".R_XOSC > .pin1"
       thickness="0.1mm"
-      pcbPath={[
-        ".Y1 > .X2",
-        { x: 1.1, y: 2 },
-        { x: -3.6, y: 2 },
-        ".R_XOSC > .pin1",
-      ]}
     />
     <trace
       name="XOUT_DRIVE"
       from=".U1 > .XOUT"
       to=".R_XOSC > .pin2"
       thickness="0.1mm"
-      pcbPath={[
-        ".U1 > .XOUT",
-        { x: -0.20005, y: -4 },
-        { x: 0.8, y: -4.8 },
-        ".R_XOSC > .pin2",
-      ]}
     />
-    <trace name="CXIN" from=".C_XIN > .pin1" to=".Y1 > .X1"
-      pcbPath={[".C_XIN > .pin1", ".Y1 > .X1"]} thickness="0.1mm" />
+    <trace name="CXIN" from=".C_XIN > .pin1" to=".Y1 > .X1" thickness="0.1mm" />
     <trace name="CXIN_G" from=".C_XIN > .pin2" to="net.GND" {...gndLabel} />
     <trace name="CXOUT" from=".C_XOUT > .pin1" to=".Y1 > .X2" />
     <trace name="CXOUT_G" from=".C_XOUT > .pin2" to="net.GND" {...gndLabel} />
@@ -896,12 +915,12 @@ export const DiscreteRp2040Support = ({
       name="R_XOSC"
       resistance="1k"
       footprint="0402"
-      pcbX={0.8}
-      pcbY={-5}
+      pcbX={-1.7}
+      pcbY={-5.3}
       schX={3.3}
       schY={-12.5}
       schSectionName={schSections.clock(name)}
-      pcbRotation={90}
+      pcbRotation={270}
     />
     <capacitor
       name="C_REG_IN"
@@ -980,20 +999,10 @@ export const DiscreteRp2040Support = ({
       from=".Y1 > .pin2"
       to=".C_XIN > .pin2"
       thickness="0.15mm"
-      pcbPath={[
-        ".Y1 > .pin2",
-        { x: -1.8, y: 1.5 },
-        { x: -1.8, y: 1.5, via: true, fromLayer: "top", toLayer: "bottom" },
-        { x: -1.8, y: 1.5 },
-        { x: -2.5, y: -1.8 },
-        { x: -2.5, y: -1.8, via: true, fromLayer: "bottom", toLayer: "top" },
-        { x: -2.5, y: -1.8 },
-        ".C_XIN > .pin2",
-      ]}
     />
     <copperpour name="GND_BOTTOM" connectsTo="net.GND" layer="bottom" />
     <silkscreentext text="BOOT" fontSize={0.75} pcbX={8.5} pcbY={15.5} />
-    <silkscreentext text="RUN" fontSize={0.75} pcbX={8.5} pcbY={-10.3} />
+    <silkscreentext text="RUN" fontSize={0.75} pcbX={9} pcbY={20.1} />
     <silkscreentext text="PWR" fontSize={0.65} pcbX={-7.5} pcbY={18.5} />
     {children}
   </subcircuit>
