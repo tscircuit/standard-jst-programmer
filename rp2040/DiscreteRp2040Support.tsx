@@ -1,4 +1,4 @@
-import { lockedProgrammerRoutes } from "../routing/locked";
+import { RoutedTrace } from "../routing/RoutedTrace";
 // Adapted from tscircuit/common @ a5797da88ec19944442d87392174af0a36fe1a0a.
 // MIT license retained in ./LICENSE. Discrete components, not a module.
 import type { ReactNode } from "react";
@@ -55,6 +55,14 @@ export const DiscreteRp2040Support = ({
   ...props
 }: MicrocontrollerRP2040Props) => (
   <subcircuit name={name} {...props}>
+    <net name="GND" routingPhaseIndex={1} />
+    <net name="VBUS" routingPhaseIndex={1} />
+    <net name="VSYS" routingPhaseIndex={1} />
+    <net name="V3V3" routingPhaseIndex={1} />
+    <net name="V1V1" routingPhaseIndex={1} />
+    <net name="ADC_VREF" routingPhaseIndex={1} />
+    <net name="TARGET_POWER" routingPhaseIndex={1} />
+    <net name="SELECTED_POWER" routingPhaseIndex={1} />
     <schematicsection
       name={schSections.rp2040(name)}
       displayName="RP2040 & Power"
@@ -70,18 +78,76 @@ export const DiscreteRp2040Support = ({
     />
 
     <autoroutingphase
-      name="crystal-signals"
+      name="crystal"
       phaseIndex={0}
-      connections={["Y1.X1", "Y1.X2"]}
+      connections={["Y1.X1", "Y1.X2", "R_XOSC.pin1", "R_XOSC.pin2"]}
+      minTraceToPadEdgeClearance={0.16}
+      minViaEdgeToPadEdgeClearance={0.25}
+    />
+    {/* Keep selected traces available to their later explicit finishing phases. */}
+    <autoroutingphase
+      name="core-and-debug"
+      phaseIndex={2}
+      reroute
+      minTraceToPadEdgeClearance={0.16}
+      minViaEdgeToPadEdgeClearance={0.25}
+      minViaHoleEdgeToViaHoleEdgeClearance={0.4}
+      connections={[
+        "U_SENSE.IN_POS",
+        "U_SENSE.IN_NEG",
+        "U_SENSE.GND",
+        "J4.VOUT",
+        "J4.GND",
+        "Y1.pin2",
+        "Y1.pin4",
+        "U1.USB_VDD",
+        "D_PWR.anode",
+        "U1.QSPI_SS",
+        "U1.QSPI_SCLK",
+        "U1.QSPI_SD0",
+        "U1.QSPI_SD1",
+        "U1.QSPI_SD2",
+        "U1.QSPI_SD3",
+        "U1.USB_DM",
+        "U1.USB_DP",
+        "R_USB1.pin1",
+        "R_USB2.pin1",
+        "U1.GPIO25",
+        "U_RGB.A",
+        "U1.GPIO18",
+        "U1.GPIO19",
+        "U_SENSE.SDA",
+        "U_SENSE.SCL",
+        "U1.RUN",
+        "U3.EN",
+        "J_USB.A5",
+        "J_USB.B5",
+        "U1.GPIO1",
+        "U1.GPIO2",
+        "U1.GPIO3",
+        "J1.SWCLK",
+        "J1.SWDIO",
+        "J3.NRST",
+        "J4.SWCLK",
+        "J4.SWDIO",
+        "J4.NRST",
+        "SW_BOOT.pin1",
+        "U_RGB.Y",
+        "R_RGB.pin2",
+      ]}
+    />
+    <autoroutingphase
+      name="remaining"
+      minTraceToPadEdgeClearance={0.16}
+      minViaEdgeToPadEdgeClearance={0.25}
+      minViaHoleEdgeToViaHoleEdgeClearance={0.4}
     />
 
-    <autoroutingphase autorouter={{algorithmFn: lockedProgrammerRoutes}} name="remaining" minTraceToPadEdgeClearance={0.12} minViaEdgeToPadEdgeClearance={0.2} minBoardEdgeClearance={0.3} />
+    <RoutedTrace name="Y1_G1" from=".Y1 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="Y1_G2" from=".Y1 > .pin4" to="net.GND" {...gndLabel} />
 
-    <trace name="Y1_G1" from=".Y1 > .pin2" to="net.GND" {...gndLabel} />
-    <trace name="Y1_G2" from=".Y1 > .pin4" to="net.GND" {...gndLabel} />
-
-    <trace name="USB_DN_B" from=".J_USB > .B7" to=".R_USB1 > .pin1" />
-    <trace name="USB_DP_B" from=".J_USB > .B6" to=".R_USB2 > .pin1" />
+    <RoutedTrace name="USB_DN_B" from=".J_USB > .B7" to=".R_USB1 > .pin1" />
+    <RoutedTrace name="USB_DP_B" from=".J_USB > .B6" to=".R_USB2 > .pin1" />
 
     <B5819W_SL
       name="D_VBUS"
@@ -93,8 +159,8 @@ export const DiscreteRp2040Support = ({
       schY={-5.8}
       schRotation={90}
     />
-    <trace name="VBUS_D" from="net.VBUS" to=".D_VBUS > .anode" {...vbusLabel} />
-    <trace
+    <RoutedTrace name="VBUS_D" from="net.VBUS" to=".D_VBUS > .anode" {...vbusLabel} />
+    <RoutedTrace
       name="D_VSYS"
       from=".D_VBUS > .cathode"
       to="net.VSYS"
@@ -114,13 +180,13 @@ export const DiscreteRp2040Support = ({
       schRotation={270}
     />
 
-    <trace
+    <RoutedTrace
       name="EN_VSYS"
       from=".R_3V3_EN > .pin1"
       to="net.VSYS"
       {...vsysLabel}
     />
-    <trace name="EN_R" from=".R_3V3_EN > .pin2" to=".U3 > .EN" />
+    <RoutedTrace name="EN_R" from=".R_3V3_EN > .pin2" to=".U3 > .EN" />
 
     <capacitor
       name="C_IOVDD1"
@@ -164,7 +230,7 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
-      pcbX={3}
+      pcbX={2.9}
       pcbY={-5}
       schX={-6.2}
       schY={-6.4}
@@ -195,35 +261,35 @@ export const DiscreteRp2040Support = ({
       pcbRotation={180}
     />
 
-    <trace
+    <RoutedTrace
       name="IO5_3V3"
       from=".C_IOVDD5 > .pin1"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="IO5_G" from=".C_IOVDD5 > .pin2" to="net.GND" {...gndLabel} />
-    <trace
+    <RoutedTrace name="IO5_G" from=".C_IOVDD5 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace
       name="IO6_3V3"
       from=".C_IOVDD6 > .pin1"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="IO6_G" from=".C_IOVDD6 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="IO6_G" from=".C_IOVDD6 > .pin2" to="net.GND" {...gndLabel} />
 
-    <trace
+    <RoutedTrace
       name="IO3_3V3"
       from=".C_IOVDD3 > .pin1"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="IO3_G" from=".C_IOVDD3 > .pin2" to="net.GND" {...gndLabel} />
-    <trace
+    <RoutedTrace name="IO3_G" from=".C_IOVDD3 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace
       name="IO4_3V3"
       from=".C_IOVDD4 > .pin1"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="IO4_G" from=".C_IOVDD4 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="IO4_G" from=".C_IOVDD4 > .pin2" to="net.GND" {...gndLabel} />
 
     <resistor
       name="R_RUN"
@@ -276,60 +342,60 @@ export const DiscreteRp2040Support = ({
       pcbRotation={90}
     />
     {/* RUN pullup */}
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="RUN_R"
       from=".R_RUN > .pin1"
       to=".U1 > .RUN"
     />
-    <trace name="RUN_3V3" from=".R_RUN > .pin2" to="net.V3V3" {...v3v3Label} />
+    <RoutedTrace name="RUN_3V3" from=".R_RUN > .pin2" to="net.V3V3" {...v3v3Label} />
 
     {/* TESTEN */}
-    <trace name="TEST_G" from=".U1 > .TESTEN" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="TEST_G" from=".U1 > .TESTEN" to="net.GND" {...gndLabel} />
 
     {/* Flash decoupling */}
-    <trace
+    <RoutedTrace
       name="FLSH_3V3"
       from=".C_FLASH > .pin1"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="FLSH_G" from=".C_FLASH > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="FLSH_G" from=".C_FLASH > .pin2" to="net.GND" {...gndLabel} />
 
     {/* IOVDD decoupling */}
-    <trace
+    <RoutedTrace
       name="IO1_3V3"
       from=".C_IOVDD1 > .pin1"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="IO1_G" from=".C_IOVDD1 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="IO1_G" from=".C_IOVDD1 > .pin2" to="net.GND" {...gndLabel} />
 
-    <trace
+    <RoutedTrace
       name="IO2_3V3"
       from=".C_IOVDD2 > .pin1"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="IO2_G" from=".C_IOVDD2 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="IO2_G" from=".C_IOVDD2 > .pin2" to="net.GND" {...gndLabel} />
 
     {/* USB_VDD decoupling */}
-    <trace
+    <RoutedTrace
       name="UVDD_3V3"
       from=".C_USB_VDD > .pin1"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="UVDD_G" from=".C_USB_VDD > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="UVDD_G" from=".C_USB_VDD > .pin2" to="net.GND" {...gndLabel} />
 
     {/* ADC decoupling */}
-    <trace
+    <RoutedTrace
       name="ADC_REF"
       from=".C_ADC > .pin1"
       to="net.ADC_VREF"
       {...adcRefLabel}
     />
-    <trace name="ADC_G" from=".C_ADC > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="ADC_G" from=".C_ADC > .pin2" to="net.GND" {...gndLabel} />
 
     <TYPE_C_16PIN_2MD_073_
       name="J_USB"
@@ -362,8 +428,8 @@ export const DiscreteRp2040Support = ({
     <W25Q16JVUXIQ
       name="U2"
       schSectionName={schSections.flash(name)}
-      pcbX={-3.8}
-      pcbY={9.5}
+      pcbX={-2.2}
+      pcbY={8}
       schX={17}
       schY={-4}
       schHeight={2}
@@ -387,11 +453,11 @@ export const DiscreteRp2040Support = ({
       name="Y1"
       maxTraceLength="20mm"
       schSectionName={schSections.clock(name)}
-      pcbX={-2.8}
-      pcbY={-8}
+      pcbX={0}
+      pcbY={-7}
       schX={1.2}
       schY={-12.5}
-      pcbRotation={180}
+      pcbRotation={270}
     />
     <SKRPACE010
       name="SW_BOOT"
@@ -404,9 +470,9 @@ export const DiscreteRp2040Support = ({
     <SKRPACE010
       name="SW_RUN"
       schSectionName={schSections.controls(name)}
-      pcbX={8.5}
-      pcbY={-7.5}
-      pcbRotation={90}
+      pcbX={9}
+      pcbY={17.5}
+      pcbRotation={0}
       schX={12.8}
       schY={-12}
     />
@@ -544,11 +610,11 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.clock(name)}
       schOrientation="vertical"
-      pcbX={0}
-      pcbY={-8}
+      pcbX={-2.7}
+      pcbY={-5.9}
       schX={0.4}
       schY={-14.2}
-      pcbRotation={90}
+      pcbRotation={180}
     />
     <capacitor
       name="C_XOUT"
@@ -556,11 +622,11 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.clock(name)}
       schOrientation="vertical"
-      pcbX={-5.5}
-      pcbY={-8}
+      pcbX={2.8}
+      pcbY={-10.2}
       schX={2.2}
       schY={-14.2}
-      pcbRotation={90}
+      pcbRotation={270}
     />
     <inductor
       name="L_AVDD"
@@ -575,55 +641,42 @@ export const DiscreteRp2040Support = ({
       pcbRotation={90}
     />
 
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="QSPI_SS"
       from=".U1 > .QSPI_SS"
       to=".U2 > .CS"
       schDisplayLabel="QSPI_SS"
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="QSPI_SD0"
-      pcbPath={[
-        ".U1 > .QSPI_SD0",
-        { x: -1.40035, y: 3.8656 },
-        { x: -1.564, y: 4.2154 },
-        { x: -1.564, y: 4.2154, via: true, fromLayer: "top", toLayer: "bottom" },
-        { x: -1.564, y: 4.2154 },
-        { x: -4.3, y: 10.9 },
-        { x: -4.3, y: 10.9, via: true, fromLayer: "bottom", toLayer: "top" },
-        { x: -4.3, y: 10.9 },
-        { x: -5.5, y: 10.5 },
-        { x: -5.5, y: 9.75 },
-        ".U2 > .pin5",
-      ]}
       from=".U1 > .QSPI_SD0"
       to=".U2 > .pin5"
       schDisplayLabel="QSPI_SD0"
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="QSPI_SD1"
       from=".U1 > .QSPI_SD1"
       to=".U2 > .pin2"
       schDisplayLabel="QSPI_SD1"
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="QSPI_SD2"
       from=".U1 > .QSPI_SD2"
       to=".U2 > .pin3"
       schDisplayLabel="QSPI_SD2"
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="QSPI_SD3"
       from=".U1 > .QSPI_SD3"
       to=".U2 > .pin7"
       schDisplayLabel="QSPI_SD3"
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="QSPI_SCLK"
       from=".U1 > .QSPI_SCLK"
@@ -631,256 +684,227 @@ export const DiscreteRp2040Support = ({
       schDisplayLabel="QSPI_SCLK"
     />
 
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="IOVDD1_P"
       from=".U1 > .IOVDD1"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="IOVDD2_P"
       from=".U1 > .IOVDD2"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="IOVDD3_P"
       from=".U1 > .IOVDD3"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="IOVDD4_P"
       from=".U1 > .IOVDD4"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="IOVDD5_P"
       from=".U1 > .IOVDD5"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="IOVDD6_P"
       from=".U1 > .IOVDD6"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="DVDD1_P"
       from=".U1 > .DVDD1"
       to="net.V1V1"
       {...v1v1Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="DVDD2_P"
       from=".U1 > .DVDD2"
       to="net.V1V1"
       {...v1v1Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="VREG_IN_P"
       from=".U1 > .VREG_IN"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="VREG_VOUT_P"
       from=".U1 > .VREG_VOUT"
       to="net.V1V1"
       {...v1v1Label}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="USB_VDD_P"
       from=".U1 > .USB_VDD"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="GND_G" from=".U1 > .GND" to="net.GND" {...gndLabel} />
-    <trace
-      {...denseTraceProps}
-      name="USBV_IO1"
-      from=".U1 > .USB_VDD"
-      to=".U1 > .IOVDD1"
-    />
-    <trace name="VBUS_A" from=".J_USB > .A4B9" to="net.VBUS" {...vbusLabel} />
-    <trace name="VBUS_B" from=".J_USB > .B4A9" to="net.VBUS" {...vbusLabel} />
-    <trace name="USB_DN_A" from=".J_USB > .A7" to=".R_USB1 > .pin1" />
-    <trace
+    <RoutedTrace name="GND_G" from=".U1 > .GND" to="net.GND" {...gndLabel} />
+
+    <RoutedTrace name="VBUS_A" from=".J_USB > .A4B9" to="net.VBUS" {...vbusLabel} />
+    <RoutedTrace name="VBUS_B" from=".J_USB > .B4A9" to="net.VBUS" {...vbusLabel} />
+    <RoutedTrace name="USB_DN_A" from=".J_USB > .A7" to=".R_USB1 > .pin1" />
+    <RoutedTrace
       {...denseTraceProps}
       name="USB_DN"
       from=".R_USB1 > .pin2"
       to=".U1 > .USB_DM"
     />
-    <trace name="USB_DP_A" from=".J_USB > .A6" to=".R_USB2 > .pin1" />
-    <trace
+    <RoutedTrace name="USB_DP_A" from=".J_USB > .A6" to=".R_USB2 > .pin1" />
+    <RoutedTrace
       {...denseTraceProps}
       name="USB_DP"
       from=".R_USB2 > .pin2"
       to=".U1 > .USB_DP"
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="CC1"
       from=".J_USB > .A5"
       to=".R_CC1 > .pin1"
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="CC2"
       from=".J_USB > .B5"
       to=".R_CC2 > .pin1"
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="USB_G"
       from=".J_USB > .A1B12"
       to="net.GND"
       {...gndLabel}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="USB_G_B"
       from=".J_USB > .B1A12"
       to="net.GND"
       {...gndLabel}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="USB_EH1"
       from=".J_USB > .EH1"
       to="net.GND"
       {...gndLabel}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="USB_EH1_ALT"
       from=".J_USB > .pin13_alt1"
       to="net.GND"
       {...gndLabel}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="USB_EH2"
       from=".J_USB > .EH2"
       to="net.GND"
       {...gndLabel}
     />
-    <trace
+    <RoutedTrace
       {...denseTraceProps}
       name="USB_EH2_ALT"
       from=".J_USB > .pin14_alt1"
       to="net.GND"
       {...gndLabel}
     />
-    <trace name="CC1_G" from=".R_CC1 > .pin2" to="net.GND" {...gndLabel} />
-    <trace name="CC2_G" from=".R_CC2 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="CC1_G" from=".R_CC1 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="CC2_G" from=".R_CC2 > .pin2" to="net.GND" {...gndLabel} />
 
-    <trace name="VBUS_C" from="net.VBUS" to=".C_VBUS > .pin1" {...vbusLabel} />
-    <trace name="VBUS_G" from=".C_VBUS > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="VBUS_C" from="net.VBUS" to=".C_VBUS > .pin1" {...vbusLabel} />
+    <RoutedTrace name="VBUS_G" from=".C_VBUS > .pin2" to="net.GND" {...gndLabel} />
 
-    <trace name="VSYS_IN" from="net.VSYS" to=".U3 > .VIN" {...vsysLabel} />
+    <RoutedTrace name="VSYS_IN" from="net.VSYS" to=".U3 > .VIN" {...vsysLabel} />
 
-    <trace name="REG_3V3" from=".U3 > .VOUT" to="net.V3V3" {...v3v3Label} />
-    <trace name="REG_G" from=".U3 > .GND" to="net.GND" {...gndLabel} />
-    <trace name="C3V3_P" from=".C_3V3 > .pin1" to="net.V3V3" {...v3v3Label} />
-    <trace name="C3V3_G" from=".C_3V3 > .pin2" to="net.GND" {...gndLabel} />
-    <trace name="CORE_P" from=".C_CORE > .pin1" to="net.V1V1" {...v1v1Label} />
-    <trace name="CORE_G" from=".C_CORE > .pin2" to="net.GND" {...gndLabel} />
-    <trace name="CUSB_P" from=".C_USB > .pin1" to="net.V3V3" {...v3v3Label} />
-    <trace name="CUSB_G" from=".C_USB > .pin2" to="net.GND" {...gndLabel} />
-    <trace name="AVDD_IN" from=".L_AVDD > .pin1" to="net.V3V3" {...v3v3Label} />
-    <trace
+    <RoutedTrace name="REG_3V3" from=".U3 > .VOUT" to="net.V3V3" {...v3v3Label} />
+    <RoutedTrace name="REG_G" from=".U3 > .GND" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="C3V3_P" from=".C_3V3 > .pin1" to="net.V3V3" {...v3v3Label} />
+    <RoutedTrace name="C3V3_G" from=".C_3V3 > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="CORE_P" from=".C_CORE > .pin1" to="net.V1V1" {...v1v1Label} />
+    <RoutedTrace name="CORE_G" from=".C_CORE > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="CUSB_P" from=".C_USB > .pin1" to="net.V3V3" {...v3v3Label} />
+    <RoutedTrace name="CUSB_G" from=".C_USB > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="AVDD_IN" from=".L_AVDD > .pin1" to="net.V3V3" {...v3v3Label} />
+    <RoutedTrace
       name="AVDD"
       from=".L_AVDD > .pin2"
       to="net.ADC_VREF"
       {...adcRefLabel}
     />
-    <trace
-      name="ADC_AVDD"
+    <RoutedTrace
+      name="ADC_POWER"
       from=".U1 > .ADC_AVDD"
       to="net.ADC_VREF"
       {...adcRefLabel}
     />
-    <trace name="FLSH_GND" from=".U2 > .GND" to="net.GND" {...gndLabel} />
-    <trace name="FLSH_VCC" from=".U2 > .VCC" to="net.V3V3" {...v3v3Label} />
-    <trace name="FLSH_EP" from=".U2 > .EP" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="FLSH_GND" from=".U2 > .GND" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="FLSH_VCC" from=".U2 > .VCC" to="net.V3V3" {...v3v3Label} />
+    <RoutedTrace name="FLSH_EP" from=".U2 > .EP" to="net.GND" {...gndLabel} />
 
-    <trace
-      name="XIN"
-      from=".U1 > .XIN"
-      to=".Y1 > .X1"
-      thickness="0.1mm"
-      pcbPath={[
-        ".U1 > .XIN",
-        { x: -0.60015, y: -4.8 },
-        { x: -1.7, y: -5.9 },
-        ".Y1 > .X1",
-      ]}
-    />
-    <trace
+    <RoutedTrace name="XIN" from=".U1 > .XIN" to=".Y1 > .X1" thickness="0.1mm" />
+    <RoutedTrace
       name="XOUT"
       from=".Y1 > .X2"
       to=".R_XOSC > .pin1"
       thickness="0.1mm"
-      pcbPath={[
-        ".Y1 > .X2",
-        { x: 1.1, y: 2 },
-        { x: -3.6, y: 2 },
-        ".R_XOSC > .pin1",
-      ]}
     />
-    <trace
+    <RoutedTrace
       name="XOUT_DRIVE"
       from=".U1 > .XOUT"
       to=".R_XOSC > .pin2"
       thickness="0.1mm"
-      pcbPath={[
-        ".U1 > .XOUT",
-        { x: -0.20005, y: -4 },
-        { x: 0.8, y: -4.8 },
-        ".R_XOSC > .pin2",
-      ]}
     />
-    <trace name="CXIN" from=".C_XIN > .pin1" to=".Y1 > .X1"
-      pcbPath={[".C_XIN > .pin1", ".Y1 > .X1"]} thickness="0.1mm" />
-    <trace name="CXIN_G" from=".C_XIN > .pin2" to="net.GND" {...gndLabel} />
-    <trace name="CXOUT" from=".C_XOUT > .pin1" to=".Y1 > .X2" />
-    <trace name="CXOUT_G" from=".C_XOUT > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="CXIN" from=".C_XIN > .pin1" to=".Y1 > .X1" thickness="0.1mm" />
+    <RoutedTrace name="CXIN_G" from=".C_XIN > .pin2" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="CXOUT" from=".C_XOUT > .pin1" to=".Y1 > .X2" />
+    <RoutedTrace name="CXOUT_G" from=".C_XOUT > .pin2" to="net.GND" {...gndLabel} />
 
-    <trace name="BOOT_SW" from=".SW_BOOT > .pin1" to=".R_BOOT_SER > .pin1" />
-    <trace name="BOOT_LIMIT" from=".R_BOOT_SER > .pin2" to=".U1 > .QSPI_SS" />
-    <trace name="BOOT_G" from=".SW_BOOT > .pin3" to="net.GND" {...gndLabel} />
-    <trace name="BOOT_R" from=".R_BOOT > .pin1" to=".U1 > .QSPI_SS" />
-    <trace
+    <RoutedTrace name="BOOT_SW" from=".SW_BOOT > .pin1" to=".R_BOOT_SER > .pin1" />
+    <RoutedTrace name="BOOT_LIMIT" from=".R_BOOT_SER > .pin2" to=".U1 > .QSPI_SS" />
+    <RoutedTrace name="BOOT_G" from=".SW_BOOT > .pin3" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="BOOT_R" from=".R_BOOT > .pin1" to=".U1 > .QSPI_SS" />
+    <RoutedTrace
       name="BOOT_3V3"
       from=".R_BOOT > .pin2"
       to="net.V3V3"
       {...v3v3Label}
     />
-    <trace name="RUN_SW" from=".SW_RUN > .pin1" to=".U1 > .RUN" />
-    <trace name="RUN_G" from=".SW_RUN > .pin4" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="RUN_SW" from=".SW_RUN > .pin1" to=".U1 > .RUN" />
+    <RoutedTrace name="RUN_G" from=".SW_RUN > .pin4" to="net.GND" {...gndLabel} />
 
-    <trace
+    <RoutedTrace
       name="PLED_3V3"
       from="net.V3V3"
       to=".R_PWR_LED > .pin1"
       {...v3v3Label}
     />
-    <trace name="PLED_D" from=".R_PWR_LED > .pin2" to=".D_PWR > .anode" />
-    <trace name="PLED_G" from=".D_PWR > .cathode" to="net.GND" {...gndLabel} />
+    <RoutedTrace name="PLED_D" from=".R_PWR_LED > .pin2" to=".D_PWR > .anode" />
+    <RoutedTrace name="PLED_G" from=".D_PWR > .cathode" to="net.GND" {...gndLabel} />
 
     <resistor
       name="R_BOOT_SER"
@@ -896,12 +920,12 @@ export const DiscreteRp2040Support = ({
       name="R_XOSC"
       resistance="1k"
       footprint="0402"
-      pcbX={0.8}
-      pcbY={-5}
+      pcbX={2.8}
+      pcbY={-8.1}
       schX={3.3}
       schY={-12.5}
       schSectionName={schSections.clock(name)}
-      pcbRotation={90}
+      pcbRotation={180}
     />
     <capacitor
       name="C_REG_IN"
@@ -963,37 +987,20 @@ export const DiscreteRp2040Support = ({
       schSectionName={schSections.rp2040(name)}
       pcbRotation={270}
     />
-    <trace name="CREGI_P" from=".C_REG_IN > .pin1" to="net.VSYS" />
-    <trace name="CREGI_G" from=".C_REG_IN > .pin2" to="net.GND" />
-    <trace name="CREGO_P" from=".C_REG_OUT > .pin1" to="net.V3V3" />
-    <trace name="CREGO_G" from=".C_REG_OUT > .pin2" to="net.GND" />
-    <trace name="CVREG_P" from=".C_VREG_IN > .pin1" to="net.V3V3" />
-    <trace name="CVREG_G" from=".C_VREG_IN > .pin2" to="net.GND" />
-    <trace name="CDVDD1_P" from=".C_DVDD1 > .pin1" to="net.V1V1" />
-    <trace name="CDVDD1_G" from=".C_DVDD1 > .pin2" to="net.GND" />
-    <trace name="CDVDD2_P" from=".C_DVDD2 > .pin1" to="net.V1V1" />
-    <trace name="CDVDD2_G" from=".C_DVDD2 > .pin2" to="net.GND" />
-    {/* Keep ground vias outside the crystal/capacitor pad gaps. Points are in
-        Y1's local frame (180 degree rotation at -2.8,-8). */}
-    <trace
-      name="XOSC_GROUND_LINK"
-      from=".Y1 > .pin2"
-      to=".C_XIN > .pin2"
-      thickness="0.15mm"
-      pcbPath={[
-        ".Y1 > .pin2",
-        { x: -1.8, y: 1.5 },
-        { x: -1.8, y: 1.5, via: true, fromLayer: "top", toLayer: "bottom" },
-        { x: -1.8, y: 1.5 },
-        { x: -2.5, y: -1.8 },
-        { x: -2.5, y: -1.8, via: true, fromLayer: "bottom", toLayer: "top" },
-        { x: -2.5, y: -1.8 },
-        ".C_XIN > .pin2",
-      ]}
-    />
+    <RoutedTrace name="CREGI_P" from=".C_REG_IN > .pin1" to="net.VSYS" />
+    <RoutedTrace name="CREGI_G" from=".C_REG_IN > .pin2" to="net.GND" />
+    <RoutedTrace name="CREGO_P" from=".C_REG_OUT > .pin1" to="net.V3V3" />
+    <RoutedTrace name="CREGO_G" from=".C_REG_OUT > .pin2" to="net.GND" />
+    <RoutedTrace name="CVREG_P" from=".C_VREG_IN > .pin1" to="net.V3V3" />
+    <RoutedTrace name="CVREG_G" from=".C_VREG_IN > .pin2" to="net.GND" />
+    <RoutedTrace name="CDVDD1_P" from=".C_DVDD1 > .pin1" to="net.V1V1" />
+    <RoutedTrace name="CDVDD1_G" from=".C_DVDD1 > .pin2" to="net.GND" />
+    <RoutedTrace name="CDVDD2_P" from=".C_DVDD2 > .pin1" to="net.V1V1" />
+    <RoutedTrace name="CDVDD2_G" from=".C_DVDD2 > .pin2" to="net.GND" />
+
     <copperpour name="GND_BOTTOM" connectsTo="net.GND" layer="bottom" />
     <silkscreentext text="BOOT" fontSize={0.75} pcbX={8.5} pcbY={15.5} />
-    <silkscreentext text="RUN" fontSize={0.75} pcbX={8.5} pcbY={-10.3} />
+    <silkscreentext text="RUN" fontSize={0.75} pcbX={9} pcbY={20.1} />
     <silkscreentext text="PWR" fontSize={0.65} pcbX={-7.5} pcbY={18.5} />
     {children}
   </subcircuit>

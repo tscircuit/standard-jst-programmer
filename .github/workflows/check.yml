@@ -16,6 +16,7 @@ jobs:
       - run: bun run test
       - run: cc -Wall -Werror scripts/check-firmware-math.c -o /tmp/check-firmware-math && /tmp/check-firmware-math
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: circuits
           path: dist/

@@ -18,9 +18,10 @@ tsci add tscircuit/standard-jst-programmer
 | `StandardJstPowerSide` | Side-facing two-pin power connector. |
 | `StandardJstSwdResetUpward` | Upward-facing five-pin SWD, power, and NRST drop-in. |
 | `StandardJstSwdResetSide` | Side-facing five-pin SWD, power, and NRST drop-in. |
+| `StandardTagConnectSwd` | Bare-pad TC2030 no-legs target footprint for the TC2030-IDC-NL-050 cable. |
 | `ProgrammerBoard` | Complete 26 × 42 mm USB-C programmer; four copper layers, top-side assembly. |
 
-Each connector includes its footprint, JLCPCB part number, and 3D model. Choose the three-pin interface for Raspberry Pi Debug Probe cable compatibility, or the five-pin extension when you also need NRST.
+Each JST connector includes its footprint, JLCPCB part number, and 3D model. The Tag-Connect target is bare copper and alignment holes: no purchased connector is required. Choose the three-pin interface for Raspberry Pi Debug Probe cable compatibility, or the five-pin extension when you also need NRST.
 
 ## Add SWD and power to a target board
 
@@ -84,6 +85,42 @@ Use `StandardJstSwdResetUpward` for top entry. Connect `NRST` to the MCU's activ
 | 5 | `.NRST` | Active-low reset, with a target-side 3.3 V pull-up |
 
 Use a straight-through five-way JST SH cable. Pin 1 follows the voltage switch; it is **not fixed at 3.3 V**. This five-pin extension is not the Raspberry Pi three-pin connector standard.
+
+## Use a Tag-Connect cable
+
+The programmer's **J4 TAG** header mates with the [TC2030-IDC-NL-050](https://www.tag-connect.com/product/tc2030-idc-050-6-pin-tag-connect-plug-of-nails-spring-pin-cable-no-legs-to-6-pin-0-05-idc) cable: **6 pins, 2 × 3, 1.27 mm (0.05 inch)**. Align the IDC socket's pin-1 mark/red stripe with the programmer's **1** mark. This header is unshrouded; check its orientation before applying USB power. The 2.54 mm IDC and 10-pin Cortex cables do not fit.
+
+```tsx
+import { StandardTagConnectSwd } from "@tsci/tscircuit.standard-jst-programmer"
+
+export default () => (
+  <board width={30} height={25}>
+    <StandardTagConnectSwd name="J_DEBUG" pcbX={0} pcbY={0}
+      noConnect={["SWO"]} />
+    <trace from=".J_DEBUG > .VOUT" to="net.TARGET_POWER_IN" />
+    <trace from=".J_DEBUG > .SWDIO" to="net.SWDIO" />
+    <trace from=".J_DEBUG > .NRST" to="net.NRST" />
+    <trace from=".J_DEBUG > .SWCLK" to="net.SWCLK" />
+    <trace from=".J_DEBUG > .GND" to="net.GND" />
+    <resistor name="R_RESET" resistance="10k" footprint="0402"
+      connections={{pin1:"net.NRST", pin2:"net.V3V3"}} />
+    {/* Add your MCU, supply input, and target-side SWD series resistors. */}
+  </board>
+)
+```
+
+| IDC / Tag-Connect contact | Selector | Use |
+| --- | --- | --- |
+| 1 | `.VOUT` | Selected, current-sensed 3.3 V or 5 V output |
+| 2 | `.SWDIO` | SWD data |
+| 3 | `.NRST` | Open-drain target reset; add a pull-up to 3.3 V |
+| 4 | `.SWCLK` | SWD clock |
+| 5 | `.GND` | Ground |
+| 6 | `.SWO` | Unconnected on this programmer; SWO capture is not supported |
+
+This uses the [TC2030 SWD signal positions](https://www.tag-connect.com/wp-content/uploads/bsk-pdf-manager/TC2030-CTX_1.pdf), with **pin 1 supplying power**, not sensing VTref. Set the selector to match the target's power input before connecting. SWD/reset logic remains 3.3 V in both switch positions. For a separately powered target, leave `.VOUT` unconnected on the target footprint. Do not join the programmer's VOUT to another supply. J4 shares all signals and the current monitor with the JST ports; connect only one target at a time.
+
+Place `StandardTagConnectSwd` on the target's top side with the usual `pcbX`, `pcbY`, and `pcbRotation` props. It provides six 0.7874 mm pads on a 1.27 mm grid, three 0.9906 mm non-plated alignment holes, no solder paste, and a central routing keepout, following the [manufacturer's Rev B footprint](https://www.tag-connect.com/wp-content/uploads/bsk-pdf-manager/2019/12/TC2030-IDC-NL-Datasheet-Rev-B.pdf). Route each contact outward, keep unrelated tracks at least 0.508 mm from the contact pads, and keep the probe's 10.4 × 7.8 mm courtyard clear for access. Mark the footprint **DNL** in the assembly BOM. Hold the no-legs cable against the board during programming, or use a TC2030-CLIP with access to the board underside. There is no connector body to assemble or display in 3D.
 
 ## Connect the cables
 
