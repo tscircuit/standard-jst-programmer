@@ -83,8 +83,6 @@ export const DiscreteRp2040Support = ({
       minTraceToPadEdgeClearance={0.16}
       minViaEdgeToPadEdgeClearance={0.25}
     />
-    {/* Route dense MCU, power, and target connections together so later
-        stages do not trap an unrouted pin behind already-fixed copper. */}
     <autoroutingphase
       name="core-and-debug"
       phaseIndex={1}
@@ -92,16 +90,25 @@ export const DiscreteRp2040Support = ({
       minViaEdgeToPadEdgeClearance={0.25}
       minViaHoleEdgeToViaHoleEdgeClearance={0.4}
       connections={[
-        "U1.USB_DM",
-        "U1.USB_DP",
-        "R_USB1.pin1",
-        "R_USB2.pin1",
+        "U_SENSE.IN_POS",
+        "U_SENSE.IN_NEG",
+        "U_SENSE.GND",
+        "J4.VOUT",
+        "J4.GND",
+        "Y1.pin2",
+        "Y1.pin4",
+        "U1.USB_VDD",
+        "D_PWR.anode",
         "U1.QSPI_SS",
         "U1.QSPI_SCLK",
         "U1.QSPI_SD0",
         "U1.QSPI_SD1",
         "U1.QSPI_SD2",
         "U1.QSPI_SD3",
+        "U1.USB_DM",
+        "U1.USB_DP",
+        "R_USB1.pin1",
+        "R_USB2.pin1",
         "U1.GPIO25",
         "U_RGB.A",
         "U1.GPIO18",
@@ -418,8 +425,8 @@ export const DiscreteRp2040Support = ({
     <W25Q16JVUXIQ
       name="U2"
       schSectionName={schSections.flash(name)}
-      pcbX={-3.8}
-      pcbY={9.5}
+      pcbX={-2.2}
+      pcbY={8}
       schX={17}
       schY={-4}
       schHeight={2}
@@ -443,11 +450,11 @@ export const DiscreteRp2040Support = ({
       name="Y1"
       maxTraceLength="20mm"
       schSectionName={schSections.clock(name)}
-      pcbX={-2.8}
-      pcbY={-8}
+      pcbX={0}
+      pcbY={-7}
       schX={1.2}
       schY={-12.5}
-      pcbRotation={0}
+      pcbRotation={270}
     />
     <SKRPACE010
       name="SW_BOOT"
@@ -600,11 +607,11 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.clock(name)}
       schOrientation="vertical"
-      pcbX={-5.5}
-      pcbY={-8}
+      pcbX={-2.7}
+      pcbY={-5.9}
       schX={0.4}
       schY={-14.2}
-      pcbRotation={90}
+      pcbRotation={180}
     />
     <capacitor
       name="C_XOUT"
@@ -612,11 +619,11 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSectionName={schSections.clock(name)}
       schOrientation="vertical"
-      pcbX={0}
-      pcbY={-8}
+      pcbX={2.8}
+      pcbY={-10.2}
       schX={2.2}
       schY={-14.2}
-      pcbRotation={90}
+      pcbRotation={270}
     />
     <inductor
       name="L_AVDD"
@@ -752,12 +759,7 @@ export const DiscreteRp2040Support = ({
       {...v3v3Label}
     />
     <trace name="GND_G" from=".U1 > .GND" to="net.GND" {...gndLabel} />
-    <trace
-      {...denseTraceProps}
-      name="USBV_IO1"
-      from=".U1 > .USB_VDD"
-      to=".U1 > .IOVDD1"
-    />
+
     <trace name="VBUS_A" from=".J_USB > .A4B9" to="net.VBUS" {...vbusLabel} />
     <trace name="VBUS_B" from=".J_USB > .B4A9" to="net.VBUS" {...vbusLabel} />
     <trace name="USB_DN_A" from=".J_USB > .A7" to=".R_USB1 > .pin1" />
@@ -915,12 +917,12 @@ export const DiscreteRp2040Support = ({
       name="R_XOSC"
       resistance="1k"
       footprint="0402"
-      pcbX={-1.7}
-      pcbY={-5.3}
+      pcbX={2.8}
+      pcbY={-8.1}
       schX={3.3}
       schY={-12.5}
       schSectionName={schSections.clock(name)}
-      pcbRotation={270}
+      pcbRotation={180}
     />
     <capacitor
       name="C_REG_IN"
@@ -992,14 +994,7 @@ export const DiscreteRp2040Support = ({
     <trace name="CDVDD1_G" from=".C_DVDD1 > .pin2" to="net.GND" />
     <trace name="CDVDD2_P" from=".C_DVDD2 > .pin1" to="net.V1V1" />
     <trace name="CDVDD2_G" from=".C_DVDD2 > .pin2" to="net.GND" />
-    {/* Keep ground vias outside the crystal/capacitor pad gaps. Points are in
-        Y1's local frame (180 degree rotation at -2.8,-8). */}
-    <trace
-      name="XOSC_GROUND_LINK"
-      from=".Y1 > .pin2"
-      to=".C_XIN > .pin2"
-      thickness="0.15mm"
-    />
+
     <copperpour name="GND_BOTTOM" connectsTo="net.GND" layer="bottom" />
     <silkscreentext text="BOOT" fontSize={0.75} pcbX={8.5} pcbY={15.5} />
     <silkscreentext text="RUN" fontSize={0.75} pcbX={9} pcbY={20.1} />

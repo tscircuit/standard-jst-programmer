@@ -202,7 +202,7 @@ export function ProgrammerBoard({
         <silkscreentext text="TAG" pcbX={9.5} pcbY={-4.3} fontSize={0.7} />
         <INA219AIDCNR
           name="U_SENSE"
-          pcbX={3.4}
+          pcbX={-4}
           pcbY={-10.5}
           schX={-23}
           schY={8}
@@ -213,9 +213,9 @@ export function ProgrammerBoard({
           footprint="0603"
           manufacturerPartNumber="RL0603FR-070R1L"
           supplierPartNumbers={{ jlcpcb: ["C326946"] }}
-          pcbX={6.5}
-          pcbY={-12.1}
-          pcbRotation={90}
+          pcbX={-0.5}
+          pcbY={-11.5}
+          pcbRotation={270}
           schX={-23}
           schY={5}
         />
@@ -223,8 +223,8 @@ export function ProgrammerBoard({
           name="C_SENSE"
           capacitance="100nF"
           footprint="0402"
-          pcbX={3.4}
-          pcbY={-8}
+          pcbX={-4}
+          pcbY={-13.2}
           schX={-20}
           schY={9}
         />
@@ -232,8 +232,8 @@ export function ProgrammerBoard({
           name="R_SDA"
           resistance="4.7k"
           footprint="0402"
-          pcbX={0}
-          pcbY={-12.3}
+          pcbX={-4.9}
+          pcbY={-8.1}
           schX={-26}
           schY={11}
         />
@@ -241,8 +241,8 @@ export function ProgrammerBoard({
           name="R_SCL"
           resistance="4.7k"
           footprint="0402"
-          pcbX={-0.1}
-          pcbY={-10.8}
+          pcbX={-3}
+          pcbY={-8.1}
           schX={-24}
           schY={11}
         />
@@ -260,12 +260,7 @@ export function ProgrammerBoard({
         />
         <trace from=".U_SENSE > .VS" to="net.V3V3" />
         <trace from=".U_SENSE > .GND" to="net.GND" />
-        <trace
-          name="SENSE_GND_LINK"
-          from=".U_SENSE > .GND"
-          to=".U_SENSE > .A0"
-          thickness={0.15}
-        />
+
         <trace from=".U_SENSE > .A0" to="net.GND" />
         <trace from=".U_SENSE > .A1" to="net.GND" />
         <trace from=".U_SENSE > .SDA" to=".U1 > .GPIO18" />
