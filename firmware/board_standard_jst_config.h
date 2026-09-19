@@ -5,7 +5,8 @@
 #define PROBE_PIN_OFFSET 2
 #define PROBE_PIN_SWCLK (PROBE_PIN_OFFSET + 0)
 #define PROBE_PIN_SWDIO (PROBE_PIN_OFFSET + 1)
-// Three-pin SWD has no physical reset signal.
+#define PROBE_PIN_RESET 1
+// GPIO1 is open-drain; the target must provide the reset pull-up.
 // Upstream compiles CDC unconditionally. Keep it on unconnected RP2040 pins;
 // no UART signal is routed to the three-pin JST connector.
 #define PROBE_CDC_UART
@@ -15,4 +16,4 @@
 #define PROBE_UART_BAUDRATE 115200
 #define PROBE_PRODUCT_STRING "Standard JST SWD (CMSIS-DAP)"
 
-#define PROBE_USB_CONNECTED_LED 25
+// GPIO25 drives the addressable RGB through a 5 V buffer.

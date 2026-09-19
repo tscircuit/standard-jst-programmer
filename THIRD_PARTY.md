@@ -10,3 +10,7 @@ Firmware sources are fetched from raspberrypi/debugprobe (MIT) and raspberrypi/p
 Original code in this repository is MIT licensed. The MIT license does not override the licenses of third-party material.
 
 The JST footprints and CAD metadata are imported from JLCPCB/EasyEDA catalog parts C160389 (BM03B-SRSS-TB), C160403 (SM03B-SRSS-TB), C160388 (BM02B-SRSS-TB), and C160402 (SM02B-SRSS-TB). Mounting tabs are mechanical; signal contact numbering and pad geometry are preserved. The C&K JS102011SAQN selector footprint/model uses C221660. External vendor 3D models are referenced from the tscircuit model CDN and are not original MIT-licensed geometry.
+
+Five-pin JST footprints/models use JLCPCB/EasyEDA C160391 (BM05B-SRSS-TB) and C136657 (SM05B-SRSS-TB); mounting tabs are mechanical. Current monitor C87469 (INA219AIDCNR), RGB LED C41413180 (XL-1615RGBC-2812B-S), and logic buffer C350557 (SN74AHCT1G125DCKR) use the corresponding catalog footprints and models. The LED courtyard is adjusted to a 0.25 mm copper clearance; contact geometry and model alignment are unchanged.
+
+Electrical references: [INA219 datasheet](https://www.ti.com/lit/ds/symlink/ina219.pdf), [AHCT buffer datasheet](https://www.ti.com/lit/ds/symlink/sn74ahct1g125.pdf), and [XINGLIGHT LED datasheet](https://www.lcsc.com/datasheet/C41413180.pdf). Firmware extensions implement INA219 measurements, USB CDC telemetry, addressable RGB status, and the upstream open-drain NRST interface.

@@ -14,15 +14,8 @@ fi
 git -C "$firmware_work/pico-sdk" checkout 079c6f39023649b154152db30f1d781e884879bc
 git -C "$firmware_work/pico-sdk" submodule update --init --recursive
 cp "$repo_root/firmware/board_standard_jst_config.h" "$firmware_work/debugprobe/include/board_standard_jst_config.h"
-python3 - "$firmware_work/debugprobe" <<'PY'
-from pathlib import Path
-import sys
-p = Path(sys.argv[1]) / 'src/probe_config.h'
-s = p.read_text()
-s = s.replace('#include "board_debug_probe_config.h"', '#include "board_standard_jst_config.h"')
-p.write_text(s)
+python3 "$repo_root/firmware/patch_upstream.py" "$firmware_work/debugprobe"
 
-PY
 cmake -S "$firmware_work/debugprobe" -B "$firmware_work/build" \
   -DPICO_SDK_PATH="$firmware_work/pico-sdk" \
   -DPICO_BOARD=standard_jst_programmer \

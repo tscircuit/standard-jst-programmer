@@ -1,6 +1,6 @@
 {
   "name": "@tsci/tscircuit.standard-jst-programmer",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "author": "tscircuit",
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
     "typescript": "^5.0.0",
     "@tscircuit/checks": "0.0.199"
   },
-  "description": "Three-pin JST SH SWD and separate two-pin power connectors, with a compact USB-C RP2040 programmer and 5 V / 3.3 V selector",
+  "description": "Compact RP2040 USB-C programmer with three/five-pin JST SWD, NRST, selectable sensed power, and RGB status",
   "keywords": [
     "tscircuit",
     "circuit",

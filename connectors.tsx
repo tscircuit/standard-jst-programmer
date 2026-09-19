@@ -1,3 +1,5 @@
+import { JstSwdResetSide } from "./footprints/JstSwdResetSide"
+import { JstSwdResetUpward } from "./footprints/JstSwdResetUpward"
 import type { ChipProps } from "tscircuit"
 import { JstSwdUpward } from "./footprints/JstSwdUpward"
 import { JstSwdSide } from "./footprints/JstSwdSide"
@@ -19,4 +21,14 @@ export function StandardJstPowerUpward(props: PowerConnectorProps) {
 }
 export function StandardJstPowerSide(props: PowerConnectorProps) {
  return <JstPowerSide {...props} pinLabels={powerPinLabels} />
+}
+
+/** Five-pin powered SWD extension; pin 1 follows the programmer's voltage selector. */
+export const swdResetPinLabels = {pin1:["VOUT"], pin2:["SWDIO"], pin3:["GND"], pin4:["SWCLK"], pin5:["NRST", "nRESET"]} as const
+export type SwdResetConnectorProps = Omit<ChipProps<typeof swdResetPinLabels>, "footprint" | "pinLabels">
+export function StandardJstSwdResetSide(props: SwdResetConnectorProps) {
+ return <JstSwdResetSide {...props} pinLabels={swdResetPinLabels} />
+}
+export function StandardJstSwdResetUpward(props: SwdResetConnectorProps) {
+ return <JstSwdResetUpward {...props} pinLabels={swdResetPinLabels} />
 }

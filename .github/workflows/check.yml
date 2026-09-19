@@ -14,6 +14,7 @@ jobs:
       - run: bun run typecheck
       - run: bun run build -- --svgs
       - run: bun run test
+      - run: cc -Wall -Werror scripts/check-firmware-math.c -o /tmp/check-firmware-math && /tmp/check-firmware-math
       - uses: actions/upload-artifact@v4
         with:
           name: circuits

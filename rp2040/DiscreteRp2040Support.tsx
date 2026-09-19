@@ -1,3 +1,4 @@
+import { lockedProgrammerRoutes } from "../routing/locked";
 // Adapted from tscircuit/common @ a5797da88ec19944442d87392174af0a36fe1a0a.
 // MIT license retained in ./LICENSE. Discrete components, not a module.
 import type { ReactNode } from "react";
@@ -73,6 +74,8 @@ export const DiscreteRp2040Support = ({
       phaseIndex={0}
       connections={["Y1.X1", "Y1.X2"]}
     />
+
+    <autoroutingphase autorouter={{algorithmFn: lockedProgrammerRoutes}} name="remaining" minTraceToPadEdgeClearance={0.12} minViaEdgeToPadEdgeClearance={0.2} minBoardEdgeClearance={0.3} />
 
     <trace name="Y1_G1" from=".Y1 > .pin2" to="net.GND" {...gndLabel} />
     <trace name="Y1_G2" from=".Y1 > .pin4" to="net.GND" {...gndLabel} />
@@ -332,7 +335,7 @@ export const DiscreteRp2040Support = ({
       name="J_USB"
       schSectionName={schSections.usb(name)}
       pcbX={0}
-      pcbY={15}
+      pcbY={17}
       pcbRotation={180}
       schX={10.5}
       schY={-5.3}
@@ -408,17 +411,6 @@ export const DiscreteRp2040Support = ({
       schY={-12}
     />
     <XL_1608SURC_06
-      name="D1"
-      color="green"
-      schSectionName={schSections.status(name)}
-      pcbX={10}
-      pcbY={4.2}
-      pcbRotation={90}
-      schX={10.4}
-      schY={-13.2}
-      schRotation={90}
-    />
-    <XL_1608SURC_06
       name="D_PWR"
       color="green"
       schSectionName={schSections.status(name)}
@@ -441,18 +433,6 @@ export const DiscreteRp2040Support = ({
       schX={8.6}
       schY={-13.5}
       schRotation={90}
-    />
-    <resistor
-      name="R_LED"
-      resistance="330"
-      footprint="0402"
-      schSectionName={schSections.status(name)}
-      pcbX={7.2}
-      pcbY={1.2}
-      pcbRotation={90}
-      schX={10.4}
-      schY={-12.2}
-      schRotation={270}
     />
     <resistor
       name="R_PWR_LED"
@@ -893,9 +873,6 @@ export const DiscreteRp2040Support = ({
     <trace name="RUN_SW" from=".SW_RUN > .pin1" to=".U1 > .RUN" />
     <trace name="RUN_G" from=".SW_RUN > .pin4" to="net.GND" {...gndLabel} />
 
-    <trace name="LED_GP25" from=".U1 > .GPIO25" to=".R_LED > .pin1" />
-    <trace name="LED_D1" from=".R_LED > .pin2" to=".D1 > .anode" />
-    <trace name="LED_G" from=".D1 > .cathode" to="net.GND" {...gndLabel} />
     <trace
       name="PLED_3V3"
       from="net.V3V3"
