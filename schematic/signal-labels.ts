@@ -1,0 +1,40 @@
+/** Schematic-only names; PCB nets and saved routing selectors stay unchanged. */
+const signalLabels: Record<string, string> = {
+  '.U1 > .GPIO2': 'SWCLK_GPIO',
+  '.U1 > .GPIO3': 'SWDIO_GPIO',
+  '.U1 > .GPIO1': 'NRST_GPIO',
+  '.R_DIO > .pin2': 'SWDIO',
+  '.J1 > .SWDIO': 'SWDIO',
+  '.J3 > .SWDIO': 'SWDIO',
+  '.J4 > .SWDIO': 'SWDIO',
+  '.R_NRST > .pin2': 'NRST',
+  '.J3 > .NRST': 'NRST',
+  '.J4 > .NRST': 'NRST',
+  '.U1 > .GPIO18': 'SENSE_SDA',
+  '.U_SENSE > .SDA': 'SENSE_SDA',
+  '.U1 > .GPIO19': 'SENSE_SCL',
+  '.U_SENSE > .SCL': 'SENSE_SCL',
+  '.U1 > .GPIO25': 'RGB_DATA',
+  '.U_RGB > .A': 'RGB_DATA',
+  '.U_RGB > .Y': 'RGB_DATA_5V',
+  '.D_RGB > .DI': 'RGB_DIN',
+  '.U1 > .QSPI_SS': 'QSPI_CS',
+  '.U1 > .QSPI_SD0': 'QSPI_IO0',
+  '.U1 > .QSPI_SD1': 'QSPI_IO1',
+  '.U1 > .QSPI_SD2': 'QSPI_IO2',
+  '.U1 > .QSPI_SD3': 'QSPI_IO3',
+  '.U1 > .QSPI_SCLK': 'QSPI_CLK',
+  '.R_USB1 > .pin1': 'USB_DM',
+  '.R_USB2 > .pin1': 'USB_DP',
+  '.U1 > .USB_DM': 'USB_DM_MCU',
+  '.U1 > .USB_DP': 'USB_DP_MCU',
+  '.U1 > .RUN': 'RUN',
+  '.R_RUN > .pin1': 'RUN',
+  '.SW_RUN > .pin1': 'RUN',
+  'net.TARGET_POWER': 'VOUT',
+  'net.SELECTED_POWER': 'VSELECT',
+};
+
+export function getSchematicSignalLabel(from: string, to: string) {
+  return signalLabels[from] ?? signalLabels[to];
+}

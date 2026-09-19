@@ -43,16 +43,28 @@ export function ProgrammerBoard({
       >
         <ProgrammerFinishingTraces />
         <net name="SWCLK" routingPhaseIndex={1} />
-        <schematicsection name="target" displayName="Target SWD" />
+        <schematicsheet name="MCU__target" displayName="03 - Target programming connectors">
+          <schematicsection sectionTitleFontSize={0.35} name="swd-signals" displayName="SWD series resistors" />
+          <schematicsection sectionTitleFontSize={0.35} name="swd-three" displayName="Pico-compatible SWD" />
+          <schematicsection sectionTitleFontSize={0.35} name="swd-five" displayName="SWD with power and NRST" />
+          <schematicsection sectionTitleFontSize={0.35} name="swd-tag" displayName="Tag-Connect cable" />
+        </schematicsheet>
+        <schematicsheet name="MCU__services" displayName="04 - Target power and status">
+          <schematicsection sectionTitleFontSize={0.35} name="target-power" displayName="Selectable target supply" />
+          <schematicsection sectionTitleFontSize={0.35} name="current" displayName="Target current - INA219" />
+          <schematicsection sectionTitleFontSize={0.35} name="rgb" displayName="Programming status RGB" />
+          <schematicsection sectionTitleFontSize={0.35} name="MCU__indicator" displayName="Power indicator" />
+        </schematicsheet>
         <StandardJstSwdSide
           name="J1"
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}
           pcbX={-8.5}
           pcbY={-17.5}
           pcbRotation={0}
-          schX={-14}
-          schY={-2}
-          schSectionName="target"
+          schX={0}
+          schY={4}
+          schSheetName="MCU__target"
+          schSectionName="swd-three"
         />
         <resistor
           name="R_CLK"
@@ -60,9 +72,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={-6.5}
           pcbY={1.8}
-          schX={-19}
-          schY={0}
-          schSectionName="target"
+          schX={-8}
+          schY={4}
+          schSheetName="MCU__target"
+          schSectionName="swd-signals"
         />
         <resistor
           name="R_DIO"
@@ -70,17 +83,19 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={-6.5}
           pcbY={0.6}
-          schX={-19}
-          schY={-1}
-          schSectionName="target"
+          schX={-8}
+          schY={1}
+          schSheetName="MCU__target"
+          schSectionName="swd-signals"
         />
         <StandardJstPowerSide
           name="J2"
           pcbX={-1.8}
           pcbY={-17.5}
-          schX={-14}
-          schY={4}
-          schSectionName="target"
+          schX={1}
+          schY={5}
+          schSheetName="MCU__services"
+          schSectionName="target-power"
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}
         />
         {/* Datasheet top view: actuator toward pin 1 selects 2–3. Rotation 270° makes that the upper (5 V) position. */}
@@ -89,9 +104,10 @@ export function ProgrammerBoard({
           pcbX={-8.5}
           pcbY={-7}
           pcbRotation={270}
-          schX={-19}
-          schY={4}
-          schSectionName="target"
+          schX={-9}
+          schY={5}
+          schSheetName="MCU__services"
+          schSectionName="target-power"
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}
         />
         <capacitor
@@ -100,9 +116,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={11}
           pcbY={-13.0}
-          schX={-16}
-          schY={6}
-          schSectionName="target"
+          schX={1}
+          schY={8}
+          schSheetName="MCU__services"
+          schSectionName="target-power"
         />
         <RoutedTrace
           name="T1"
@@ -131,9 +148,10 @@ export function ProgrammerBoard({
           name="J3"
           pcbX={6.1}
           pcbY={-17.5}
-          schX={-14}
-          schY={-8}
-          schSectionName="target"
+          schX={0}
+          schY={-3}
+          schSheetName="MCU__target"
+          schSectionName="swd-five"
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}
         />
         <resistor
@@ -142,9 +160,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={-8.7}
           pcbY={3}
-          schX={-19}
-          schY={-8}
-          schSectionName="target"
+          schX={-8}
+          schY={-2}
+          schSheetName="MCU__target"
+          schSectionName="swd-signals"
         />
         <RoutedTrace
           name="NRST_GPIO"
@@ -173,9 +192,10 @@ export function ProgrammerBoard({
           pcbX={9.5}
           pcbY={-8.5}
           pcbRotation={0}
-          schX={-14}
-          schY={-14}
-          schSectionName="target"
+          schX={8}
+          schY={0}
+          schSheetName="MCU__target"
+          schSectionName="swd-tag"
           noConnect={["SWO"]}
         />
         <RoutedTrace from=".J4 > .VOUT" to="net.TARGET_POWER" />
@@ -314,8 +334,10 @@ export function ProgrammerBoard({
           name="U_SENSE"
           pcbX={-4}
           pcbY={-10.5}
-          schX={-23}
-          schY={8}
+          schX={-7}
+          schY={-3}
+          schSheetName="MCU__services"
+          schSectionName="current"
         />
         <resistor
           name="R_SHUNT"
@@ -326,8 +348,10 @@ export function ProgrammerBoard({
           pcbX={-0.5}
           pcbY={-11.5}
           pcbRotation={270}
-          schX={-23}
+          schX={-4}
           schY={5}
+          schSheetName="MCU__services"
+          schSectionName="target-power"
         />
         <capacitor
           name="C_SENSE"
@@ -335,8 +359,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={-4}
           pcbY={-13.2}
-          schX={-20}
-          schY={9}
+          schX={-3}
+          schY={-3}
+          schSheetName="MCU__services"
+          schSectionName="current"
         />
         <resistor
           name="R_SDA"
@@ -344,8 +370,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={-4.9}
           pcbY={-8.1}
-          schX={-26}
-          schY={11}
+          schX={-11}
+          schY={0}
+          schSheetName="MCU__services"
+          schSectionName="current"
         />
         <resistor
           name="R_SCL"
@@ -353,8 +381,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={-3}
           pcbY={-8.1}
-          schX={-24}
-          schY={11}
+          schX={-7}
+          schY={0}
+          schSheetName="MCU__services"
+          schSectionName="current"
         />
         <RoutedTrace from=".R_SHUNT > .pin1" to="net.SELECTED_POWER" />
         <RoutedTrace from=".R_SHUNT > .pin2" to="net.TARGET_POWER" />
@@ -386,8 +416,10 @@ export function ProgrammerBoard({
           name="D_RGB"
           pcbX={10.5}
           pcbY={4}
-          schX={16}
-          schY={-12}
+          schX={11}
+          schY={-2}
+          schSheetName="MCU__services"
+          schSectionName="rgb"
           noConnect={["DO"]}
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}
         />
@@ -395,8 +427,10 @@ export function ProgrammerBoard({
           name="U_RGB"
           pcbX={8.5}
           pcbY={1}
-          schX={12}
-          schY={-12}
+          schX={4}
+          schY={-2}
+          schSheetName="MCU__services"
+          schSectionName="rgb"
         />
         <resistor
           name="R_RGB"
@@ -404,8 +438,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={11}
           pcbY={1.5}
-          schX={14}
-          schY={-12}
+          schX={8}
+          schY={-2}
+          schSheetName="MCU__services"
+          schSectionName="rgb"
         />
         <resistor
           name="R_RGB_PD"
@@ -413,8 +449,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={8.3}
           pcbY={-1.5}
-          schX={10}
-          schY={-15}
+          schX={2}
+          schY={-5}
+          schSheetName="MCU__services"
+          schSectionName="rgb"
         />
         <capacitor
           name="C_RGB"
@@ -422,8 +460,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={10.5}
           pcbY={6.7}
-          schX={16}
-          schY={-15}
+          schX={11}
+          schY={-5}
+          schSheetName="MCU__services"
+          schSectionName="rgb"
         />
         <capacitor
           name="C_RGB_BUF"
@@ -431,8 +471,10 @@ export function ProgrammerBoard({
           footprint="0402"
           pcbX={11}
           pcbY={-0.3}
-          schX={12}
-          schY={-15}
+          schX={6}
+          schY={-5}
+          schSheetName="MCU__services"
+          schSectionName="rgb"
         />
         <RoutedTrace from=".U1 > .GPIO25" to=".U_RGB > .A" />
         <RoutedTrace from=".R_RGB_PD > .pin1" to=".U_RGB > .A" />

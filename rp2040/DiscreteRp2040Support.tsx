@@ -22,18 +22,14 @@ const adcRefLabel = {
   displayName: "ADC_REF",
   schDisplayLabel: "ADC_REF",
 } as const;
-// Keep every functional subset attached to one of the four visible sections so
-// section bounds and dividers account for all schematic components.
 const schSections = {
   rp2040: (name: string) => `${name}__rp2040`,
   usb: (name: string) => `${name}__usb`,
-  power: (name: string) => `${name}__rp2040`,
-  flash: (name: string) => `${name}__usb`,
+  power: (name: string) => `${name}__power`,
+  flash: (name: string) => `${name}__flash`,
   clock: (name: string) => `${name}__clock`,
-  controls: (name: string) => `${name}__status`,
-  display: (name: string) => `${name}__status`,
-  status: (name: string) => `${name}__status`,
-  debug: (name: string) => `${name}__status`,
+  controls: (name: string) => `${name}__controls`,
+  status: (name: string) => `${name}__indicator`,
 } as const;
 
 export type MicrocontrollerRP2040Props = Omit<
@@ -63,19 +59,16 @@ export const DiscreteRp2040Support = ({
     <net name="ADC_VREF" routingPhaseIndex={1} />
     <net name="TARGET_POWER" routingPhaseIndex={1} />
     <net name="SELECTED_POWER" routingPhaseIndex={1} />
-    <schematicsection
-      name={schSections.rp2040(name)}
-      displayName="RP2040 & Power"
-    />
-    <schematicsection
-      name={schSections.usb(name)}
-      displayName="Programming USB-C & QSPI"
-    />
-    <schematicsection name={schSections.clock(name)} displayName="Clock" />
-    <schematicsection
-      name={schSections.status(name)}
-      displayName="Status & SWD Debug"
-    />
+    <schematicsheet name={`${name}__supply`} displayName="01 - USB and 3.3 V supply">
+      <schematicsection sectionTitleFontSize={0.35} name={schSections.usb(name)} displayName="USB-C input" />
+      <schematicsection sectionTitleFontSize={0.35} name={schSections.power(name)} displayName="3.3 V regulator" />
+    </schematicsheet>
+    <schematicsheet name={`${name}__processor`} displayName="02 - RP2040 support" sheetSize="ANSI_B">
+      <schematicsection sectionTitleFontSize={0.35} name={schSections.rp2040(name)} displayName="RP2040 and decoupling" />
+      <schematicsection sectionTitleFontSize={0.35} name={schSections.flash(name)} displayName="QSPI flash" />
+      <schematicsection sectionTitleFontSize={0.35} name={schSections.clock(name)} displayName="12 MHz crystal" />
+      <schematicsection sectionTitleFontSize={0.35} name={schSections.controls(name)} displayName="BOOT and RUN" />
+    </schematicsheet>
 
     <autoroutingphase
       name="crystal"
@@ -108,12 +101,13 @@ export const DiscreteRp2040Support = ({
 
     <B5819W_SL
       name="D_VBUS"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.power(name)}
       pcbX={-9}
       pcbY={7}
       pcbRotation={0}
-      schX={3}
-      schY={-5.8}
+      schX={4}
+      schY={5}
       schRotation={90}
     />
     <RoutedTrace name="VBUS_D" from="net.VBUS" to=".D_VBUS > .anode" {...vbusLabel} />
@@ -128,12 +122,13 @@ export const DiscreteRp2040Support = ({
       name="R_3V3_EN"
       resistance="100k"
       footprint="0402"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.power(name)}
       pcbX={-6.5}
       pcbY={11.7}
       pcbRotation={90}
-      schX={3}
-      schY={-7}
+      schX={8}
+      schY={4}
       schRotation={270}
     />
 
@@ -149,72 +144,78 @@ export const DiscreteRp2040Support = ({
       name="C_IOVDD1"
       capacitance="100nF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
       pcbX={6}
       pcbY={4.5}
-      schX={-11.3}
-      schY={-6.4}
+      schX={-12.0}
+      schY={-2}
       pcbRotation={0}
     />
     <capacitor
       name="C_IOVDD2"
       capacitance="100nF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
       pcbX={5.5}
       pcbY={3.1}
-      schX={-9.6}
-      schY={-6.4}
+      schX={-9.7}
+      schY={-2}
       pcbRotation={0}
     />
     <capacitor
       name="C_IOVDD3"
       capacitance="100nF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
       pcbX={5.5}
       pcbY={-0.5}
-      schX={-7.9}
-      schY={-6.4}
+      schX={-7.4}
+      schY={-2}
       pcbRotation={0}
     />
     <capacitor
       name="C_IOVDD4"
       capacitance="100nF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
       pcbX={2.9}
       pcbY={-5}
-      schX={-6.2}
-      schY={-6.4}
+      schX={-5.1000000000000005}
+      schY={-2}
       pcbRotation={270}
     />
     <capacitor
       name="C_IOVDD5"
       capacitance="100nF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
       pcbX={-5.5}
       pcbY={-0.5}
-      schX={-4.5}
-      schY={-6.4}
+      schX={-2.8000000000000007}
+      schY={-2}
       pcbRotation={180}
     />
     <capacitor
       name="C_IOVDD6"
       capacitance="100nF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
       pcbX={-5.5}
       pcbY={3.2}
-      schX={-2.8}
-      schY={-6.4}
+      schX={-0.5}
+      schY={-2}
       pcbRotation={180}
     />
 
@@ -252,11 +253,12 @@ export const DiscreteRp2040Support = ({
       name="R_RUN"
       resistance="10k"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.controls(name)}
       pcbX={9}
       pcbY={-3.5}
-      schX={12.8}
-      schY={-13.5}
+      schX={11.5}
+      schY={-11}
       schRotation={90}
     />
 
@@ -264,12 +266,13 @@ export const DiscreteRp2040Support = ({
       name="C_FLASH"
       capacitance="100nF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.flash(name)}
       schOrientation="vertical"
       pcbX={-6.5}
       pcbY={9.5}
-      schX={16.8}
-      schY={-1.7}
+      schX={11}
+      schY={5}
       pcbRotation={90}
     />
 
@@ -277,12 +280,13 @@ export const DiscreteRp2040Support = ({
       name="C_USB_VDD"
       capacitance="100nF"
       footprint="0402"
-      schSectionName={schSections.usb(name)}
+      schSheetName={`${name}__processor`}
+      schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
       pcbX={0.8}
       pcbY={5.7}
-      schX={7.2}
-      schY={-2.2}
+      schX={-2}
+      schY={-6}
       pcbRotation={90}
     />
 
@@ -290,12 +294,13 @@ export const DiscreteRp2040Support = ({
       name="C_ADC"
       capacitance="100nF"
       footprint="0402"
-      schSectionName={schSections.power(name)}
+      schSheetName={`${name}__processor`}
+      schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
       pcbX={7}
       pcbY={6.5}
-      schX={1.3}
-      schY={-9.2}
+      schX={-4}
+      schY={-9}
       pcbRotation={90}
     />
     {/* RUN pullup */}
@@ -356,13 +361,14 @@ export const DiscreteRp2040Support = ({
 
     <TYPE_C_16PIN_2MD_073_
       name="J_USB"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.usb(name)}
       pcbX={0}
       pcbY={17}
       pcbRotation={180}
-      schX={10.5}
-      schY={-5.3}
-      schWidth={2.6}
+      schX={-7}
+      schY={2}
+      schWidth={3}
       schHeight={1.8}
       schPinArrangement={{
         leftSide: [13, 15, 17, 18, 20, 22, 23, 25],
@@ -374,21 +380,23 @@ export const DiscreteRp2040Support = ({
       name="U1"
       connections={connections}
       showPinAliases
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       pcbX={0}
       pcbY={0.5}
-      schX={-0.08}
-      schY={-2.5}
-      schWidth={2.8}
+      schX={-7}
+      schY={4}
+      schWidth={3.5}
       schHeight={5.8}
     />
     <W25Q16JVUXIQ
       name="U2"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.flash(name)}
       pcbX={-2.2}
       pcbY={8}
-      schX={17}
-      schY={-4}
+      schX={7}
+      schY={5}
       schHeight={2}
       schPinArrangement={{
         leftSide: [8, 1, 2, 3, 5, 6, 7, 4, 9],
@@ -397,51 +405,56 @@ export const DiscreteRp2040Support = ({
     />
     <AP2112K_3_3TRG1
       name="U3"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.power(name)}
       pcbX={-9}
       pcbY={13}
       pcbRotation={180}
-      schX={1.3}
-      schY={-7.8}
+      schX={7}
+      schY={1}
       schHeight={0.6}
     />
 
     <X322512MSB4SI
       name="Y1"
       maxTraceLength="20mm"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.clock(name)}
       pcbX={0}
       pcbY={-7}
-      schX={1.2}
-      schY={-12.5}
+      schX={5}
+      schY={-1}
       pcbRotation={270}
     />
     <SKRPACE010
       name="SW_BOOT"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.controls(name)}
       pcbX={8.5}
       pcbY={12.5}
-      schX={8.6}
-      schY={-12}
+      schX={6}
+      schY={-8}
     />
     <SKRPACE010
       name="SW_RUN"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.controls(name)}
       pcbX={9}
       pcbY={17.5}
       pcbRotation={0}
-      schX={12.8}
-      schY={-12}
+      schX={11.5}
+      schY={-8}
     />
     <XL_1608SURC_06
       name="D_PWR"
       color="green"
+      schSheetName={`${name}__services`}
       schSectionName={schSections.status(name)}
       pcbX={-8}
       pcbY={17.5}
       pcbRotation={0}
-      schX={14.5}
-      schY={-13.4}
+      schX={9}
+      schY={5}
       schRotation={90}
     />
 
@@ -449,69 +462,75 @@ export const DiscreteRp2040Support = ({
       name="R_BOOT"
       resistance="10k"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.controls(name)}
       pcbX={9}
       pcbY={9}
       pcbRotation={90}
-      schX={8.6}
-      schY={-13.5}
+      schX={6}
+      schY={-11}
       schRotation={90}
     />
     <resistor
       name="R_PWR_LED"
       resistance="330"
       footprint="0402"
+      schSheetName={`${name}__services`}
       schSectionName={schSections.status(name)}
       pcbX={-11}
       pcbY={18}
       pcbRotation={0}
-      schX={14.5}
-      schY={-12.2}
+      schX={9}
+      schY={7}
       schRotation={270}
     />
     <resistor
       name="R_CC1"
       resistance="5.1k"
       footprint="0402"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.usb(name)}
       pcbX={0}
       pcbY={11.5}
       pcbRotation={180}
-      schX={7.2}
-      schY={-7.5}
+      schX={-11}
+      schY={0}
       schRotation={270}
     />
     <resistor
       name="R_CC2"
       resistance="5.1k"
       footprint="0402"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.usb(name)}
       pcbX={2}
       pcbY={11.5}
-      schX={14.8}
-      schY={-6.5}
+      schX={-3}
+      schY={0}
       schRotation={270}
     />
     <resistor
       name="R_USB1"
       resistance="27"
       footprint="0402"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.usb(name)}
       pcbX={1.2}
       pcbY={9}
-      schX={13.3}
-      schY={-7.7}
+      schX={-7}
+      schY={-3}
       pcbRotation={90}
     />
     <resistor
       name="R_USB2"
       resistance="27"
       footprint="0402"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.usb(name)}
       pcbX={2.8}
       pcbY={9}
-      schX={13.3}
-      schY={-6.6}
+      schX={-3}
+      schY={-3}
       pcbRotation={90}
     />
 
@@ -519,82 +538,89 @@ export const DiscreteRp2040Support = ({
       name="C_VBUS"
       capacitance="10uF"
       footprint="0603"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.usb(name)}
       schOrientation="vertical"
       pcbX={-7.5}
       pcbY={15.5}
       pcbRotation={0}
-      schX={9}
-      schY={-2.2}
+      schX={-10}
+      schY={5}
     />
     <capacitor
       name="C_3V3"
       capacitance="10uF"
       footprint="0603"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.power(name)}
       schOrientation="vertical"
       pcbX={-9}
       pcbY={9}
-      schX={4.1}
-      schY={-7.8}
+      schX={9}
+      schY={-2}
     />
     <capacitor
       name="C_CORE"
       capacitance="1uF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       schOrientation="vertical"
       pcbX={2.5}
       pcbY={5.7}
-      schX={-3.65}
-      schY={-3.7}
+      schX={-1}
+      schY={-4}
       pcbRotation={90}
     />
     <capacitor
       name="C_USB"
       capacitance="1uF"
       footprint="0402"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.usb(name)}
       schOrientation="vertical"
       pcbX={6}
       pcbY={9}
-      schX={10.8}
-      schY={-2.2}
+      schX={-6}
+      schY={5}
     />
     <capacitor
       name="C_XIN"
       capacitance="18pF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.clock(name)}
       schOrientation="vertical"
       pcbX={-2.7}
       pcbY={-5.9}
-      schX={0.4}
-      schY={-14.2}
+      schX={3}
+      schY={-4}
       pcbRotation={180}
     />
     <capacitor
       name="C_XOUT"
       capacitance="18pF"
       footprint="0402"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.clock(name)}
       schOrientation="vertical"
       pcbX={2.8}
       pcbY={-10.2}
-      schX={2.2}
-      schY={-14.2}
+      schX={7}
+      schY={-4}
       pcbRotation={270}
     />
     <inductor
       name="L_AVDD"
       inductance="600ohm@100MHz"
       footprint="0603"
-      schSectionName={schSections.power(name)}
+      schSheetName={`${name}__processor`}
+      schSectionName={schSections.rp2040(name)}
       pcbX={8.5}
       pcbY={6}
       supplierPartNumbers={{ jlcpcb: ["C1002"] }}
-      schX={3.7}
-      schY={-9.2}
+      schX={-8}
+      schY={-9}
       pcbRotation={90}
     />
 
@@ -869,8 +895,9 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       pcbX={6.5}
       pcbY={8}
-      schX={7}
-      schY={-10.5}
+      schX={3}
+      schY={-8}
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.controls(name)}
     />
     <resistor
@@ -879,8 +906,9 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       pcbX={2.8}
       pcbY={-8.1}
-      schX={3.3}
-      schY={-12.5}
+      schX={9}
+      schY={-1}
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.clock(name)}
       pcbRotation={180}
     />
@@ -890,9 +918,10 @@ export const DiscreteRp2040Support = ({
       footprint="0603"
       pcbX={-11}
       pcbY={10.5}
-      schX={-1}
-      schY={-7.8}
+      schX={3}
+      schY={1}
       schOrientation="vertical"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.power(name)}
       pcbRotation={0}
     />
@@ -902,9 +931,10 @@ export const DiscreteRp2040Support = ({
       footprint="0603"
       pcbX={-11}
       pcbY={16}
-      schX={5.7}
-      schY={-7.8}
+      schX={11}
+      schY={1}
       schOrientation="vertical"
+      schSheetName={`${name}__supply`}
       schSectionName={schSections.power(name)}
       pcbRotation={0}
     />
@@ -914,9 +944,10 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       pcbX={4.1}
       pcbY={5.7}
-      schX={-10.5}
-      schY={-9.2}
+      schX={-11}
+      schY={-6}
       schOrientation="vertical"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       pcbRotation={90}
     />
@@ -926,9 +957,10 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       pcbX={-2.4}
       pcbY={5.7}
-      schX={-8.5}
-      schY={-9.2}
+      schX={-8}
+      schY={-6}
       schOrientation="vertical"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       pcbRotation={90}
     />
@@ -938,9 +970,10 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       pcbX={4.6}
       pcbY={-5}
-      schX={-6.5}
-      schY={-9.2}
+      schX={-5}
+      schY={-6}
       schOrientation="vertical"
+      schSheetName={`${name}__processor`}
       schSectionName={schSections.rp2040(name)}
       pcbRotation={270}
     />
