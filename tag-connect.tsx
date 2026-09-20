@@ -1,13 +1,13 @@
 import type { ChipProps } from "tscircuit";
 
-/** TC2030 SWD assignment; VOUT is the selected, current-sensed target supply. */
+/** Project-specific TC2030 assignment: fixed 3.3 V on pin 1 and USB 5 V on pin 6. */
 export const tagConnectPinLabels = {
-  pin1: ["VOUT"],
+  pin1: ["V3_3"],
   pin2: ["SWDIO"],
   pin3: ["NRST", "nRESET"],
   pin4: ["SWCLK"],
   pin5: ["GND"],
-  pin6: ["SWO"],
+  pin6: ["V5"],
 } as const;
 export type TagConnectProps = Omit<
   ChipProps<typeof tagConnectPinLabels>,

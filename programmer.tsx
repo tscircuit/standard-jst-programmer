@@ -196,9 +196,9 @@ export function ProgrammerBoard({
           schY={0}
           schSheetName="MCU__target"
           schSectionName="swd-tag"
-          noConnect={["SWO"]}
         />
-        <RoutedTrace from=".J4 > .VOUT" to="net.TARGET_POWER" />
+        <RoutedTrace from=".J4 > .V3_3" to="net.V3V3" />
+        <RoutedTrace from=".J4 > .V5" to="net.VBUS" />
         <RoutedTrace from=".J4 > .SWDIO" to=".R_DIO > .pin2" />
         <RoutedTrace from=".J4 > .NRST" to=".R_NRST > .pin2" />
         <RoutedTrace from=".J4 > .SWCLK" to="net.SWCLK" />
@@ -211,7 +211,7 @@ export function ProgrammerBoard({
           fontSize={1}
         />
         <silkscreentext
-          text="1 VOUT / 2 DIO"
+          text="1 3V3 / 2 DIO"
           pcbX={0}
           pcbY={18.6}
           layer="bottom"
@@ -225,7 +225,7 @@ export function ProgrammerBoard({
           fontSize={0.9}
         />
         <silkscreentext
-          text="5 GND / 6 NC"
+          text="5 GND / 6 5V"
           pcbX={0}
           pcbY={14.9}
           layer="bottom"

@@ -96,8 +96,8 @@ import { StandardTagConnectSwd } from "@tsci/tscircuit.standard-jst-programmer"
 export default () => (
   <board width={30} height={25}>
     <StandardTagConnectSwd name="J_DEBUG" pcbX={0} pcbY={0}
-      noConnect={["SWO"]} />
-    <trace from=".J_DEBUG > .VOUT" to="net.TARGET_POWER_IN" />
+      noConnect={["V5"]} />
+    <trace from=".J_DEBUG > .V3_3" to="net.TARGET_POWER_IN" />
     <trace from=".J_DEBUG > .SWDIO" to="net.SWDIO" />
     <trace from=".J_DEBUG > .NRST" to="net.NRST" />
     <trace from=".J_DEBUG > .SWCLK" to="net.SWCLK" />
@@ -111,14 +111,16 @@ export default () => (
 
 | IDC / Tag-Connect contact | Selector | Use |
 | --- | --- | --- |
-| 1 | `.VOUT` | Selected, current-sensed 3.3 V or 5 V output |
+| 1 | `.V3_3` | Fixed 3.3 V output |
 | 2 | `.SWDIO` | SWD data |
 | 3 | `.NRST` | Open-drain target reset; add a pull-up to 3.3 V |
 | 4 | `.SWCLK` | SWD clock |
 | 5 | `.GND` | Ground |
-| 6 | `.SWO` | Unconnected on this programmer; SWO capture is not supported |
+| 6 | `.V5` | Fixed USB 5 V output |
 
-This uses the [TC2030 SWD signal positions](https://www.tag-connect.com/wp-content/uploads/bsk-pdf-manager/TC2030-CTX_1.pdf), with **pin 1 supplying power**, not sensing VTref. Set the selector to match the target's power input before connecting. SWD/reset logic remains 3.3 V in both switch positions. For a separately powered target, leave `.VOUT` unconnected on the target footprint. Do not join the programmer's VOUT to another supply. J4 shares all signals and the current monitor with the JST ports; connect only one target at a time.
+J4 uses a **project-specific dual-power pinout**: pin 1 supplies fixed 3.3 V and pin 6 supplies USB 5 V instead of SWO. Both rails bypass the voltage selector and current monitor; the selector and current readings apply to JST VOUT only. SWD/reset logic is always 3.3 V. Do not connect this header to a target wired for SWO on pin 6.
+
+The example powers a 3.3 V target and leaves `.V5` unconnected. For a 5 V target input, connect `.V5` instead and leave `.V3_3` unconnected. For a separately powered target, leave both supply pins unconnected. Never join the two rails or connect them to another active supply. J4 shares the SWD/reset signals with the JST ports; connect only one target at a time.
 
 Place `StandardTagConnectSwd` on the target's top side with the usual `pcbX`, `pcbY`, and `pcbRotation` props. It provides six 0.7874 mm pads on a 1.27 mm grid, three 0.9906 mm non-plated alignment holes, no solder paste, and a central routing keepout, following the [manufacturer's Rev B footprint](https://www.tag-connect.com/wp-content/uploads/bsk-pdf-manager/2019/12/TC2030-IDC-NL-Datasheet-Rev-B.pdf). Route each contact outward, keep unrelated tracks at least 0.508 mm from the contact pads, and keep the probe's 10.4 × 7.8 mm courtyard clear for access. Mark the footprint **DNL** in the assembly BOM. Hold the no-legs cable against the board during programming, or use a TC2030-CLIP with access to the board underside. There is no connector body to assemble or display in 3D.
 
@@ -149,7 +151,7 @@ export default () => <ProgrammerBoard />
 
 Connect USB-C to your computer and the SWD cable to your target. Download the [v0.5.0 UF2 firmware](https://github.com/tscircuit/standard-jst-programmer/releases/download/v0.5.0/standard-jst-programmer.uf2). Hold BOOT while connecting USB, then copy the UF2 to the mounted drive. Use the [OpenOCD configuration](https://github.com/tscircuit/standard-jst-programmer/tree/main/firmware). Use `firmware/openocd.cfg` with the three-pin cable, or `firmware/openocd-reset.cfg` with the five-pin cable for hardware reset.
 
-Before connecting target power, set `SW_PWR` to the labeled **3V3** or **5V** position. Disconnect the power cable before changing voltage. Both positions supply power; there is no OFF position. Leave the two-pin power cable unplugged when the target has another supply. With a five-pin cable, leave pin 1 disconnected on a separately powered target. The connectors share SWD signals and power: connect only one target at a time, using either the five-pin cable or the three-pin plus power pair. Keep combined target consumption at or below 50 mA; this output has no dedicated current limiter.
+Before connecting JST target power, set `SW_PWR` to the labeled **3V3** or **5V** position. Disconnect the power cable before changing voltage. Both positions supply power; there is no OFF position. Leave the two-pin power cable unplugged when the target has another supply. With a five-pin cable, leave pin 1 disconnected on a separately powered target. The JST connectors share SWD signals and selectable power: connect only one target at a time, using either the five-pin cable or the three-pin plus power pair. Keep combined target consumption at or below 50 mA; this output has no dedicated current limiter.
 
 **SWD signal levels always remain 3.3 V**, including when the power output is set to 5 V. Use 5 V only with a compatible target power input; never connect it directly to a 3.3 V rail. Power the target before debugging.
 
@@ -162,7 +164,7 @@ voltage_mV,current_uA,power_uW,status
 3300,12000,39600,OK
 ```
 
-That example means **3.3 V, 12 mA, and 39.6 mW**. Readings cover the combined target current delivered through the two-pin and five-pin power outputs, in either voltage setting. They exclude the programmer and its RGB LED. USB serial is used for telemetry, not UART passthrough.
+That example means **3.3 V, 12 mA, and 39.6 mW**. Readings cover the combined target current delivered through the two-pin and five-pin power outputs, in either voltage setting. They exclude the fixed J4 rails, the programmer, and its RGB LED. USB serial is used for telemetry, not UART passthrough.
 
 Treat these as basic measurements: nominal current resolution is 0.1 mA, with shunt tolerance, sensor offset, and PCB trace resistance contributing to error. `SENSOR_ERROR` indicates unavailable data; `OVER_BUDGET` means the target exceeds the recommended 50 mA load. Neither status cuts off power.
 

@@ -434,7 +434,7 @@ console.log(
 );
 
 // The TC2030 cable is straight-through; header and target use the same six-pin map.
-const tagLabels = ["VOUT", "SWDIO", "NRST", "SWCLK", "GND", "SWO"];
+const tagLabels = ["V3_3", "SWDIO", "NRST", "SWCLK", "GND", "V5"];
 for (const variant of ["programmer", "upward", "side"]) {
   const cj = load(variant);
   const sc = cj.find((e) => e.type === "source_component" && e.name === "J4");
@@ -487,7 +487,7 @@ for (const variant of ["programmer", "upward", "side"]) {
       );
       assert.equal(
         touched,
-        sp.pin_number !== 6,
+        true,
         `IDC pin ${sp.pin_number}: actual routed endpoint`,
       );
     }
@@ -521,15 +521,19 @@ for (const variant of ["programmer", "upward", "side"]) {
     );
   }
 }
-for (const label of ["VOUT", "SWDIO", "NRST", "SWCLK", "GND"])
+for (const label of ["SWDIO", "NRST", "SWCLK", "GND"])
   connected(port("J4", label), port("J3", label));
-assert(
-  !circuit.some(
-    (e) =>
-      e.type === "source_trace" &&
-      e.connected_source_port_ids.includes(port("J4", "SWO")),
-  ),
-);
+connected(port("J4", "V3_3"), port("U3", "VOUT"));
+connected(port("J4", "V5"), port("J_USB", "A4B9"));
+for (const rail of ["V3_3", "V5"]) {
+  assert.notEqual(root(port("J4", rail)), root(port("J3", "VOUT")),
+    `J4 ${rail} bypasses selected/current-sensed VOUT`);
+}
+assert.notEqual(root(port("J4", "V3_3")), root(port("J4", "V5")));
+for (const text of ["1 3V3 / 2 DIO", "5 GND / 6 5V"]) {
+  assert(circuit.some((e) => e.type === "pcb_silkscreen_text" && e.text === text),
+    `J4 fixed-rail silkscreen: ${text}`);
+}
 console.log("IDC physical connections and TC2030 bare-pad target verified");
 
 assert(
