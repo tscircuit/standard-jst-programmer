@@ -21,7 +21,7 @@ void sbw_process_frame(const uint8_t *q, uint8_t *r) {
       if (sbw_dev_start()!=0) status=SBW_TARGET_ERROR;
       else {
         active=true;
-        // FR2433 TLV device ID, datasheet Table 6-27.
+        // FR2433 TLV device ID, datasheet Table 6-21.
         if(sbw_dev_mem_read(&id,0x1a04,1)!=0) status=SBW_TARGET_ERROR;
         else if(id!=0x8240) status=SBW_WRONG_DEVICE;
       }
