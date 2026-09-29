@@ -1,5 +1,8 @@
 {
   "$schema": "https://cdn.jsdelivr.net/npm/@tscircuit/cli/types/tscircuit.config.schema.json",
   "mainEntrypoint": "index.tsx",
-  "previewComponentPath": "preview.circuit.tsx"
+  "previewComponentPath": "preview.circuit.tsx",
+  "projectName": "standard-jst-programmer",
+  "version": "0.7.1",
+  "printBoardInformationToSilkscreen": false
 }

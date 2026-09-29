@@ -1,6 +1,6 @@
 {
   "name": "@tsci/tscircuit.standard-jst-programmer",
-  "version": "0.6.2",
+  "version": "0.7.1",
   "author": "tscircuit",
   "repository": {
     "type": "git",
@@ -9,9 +9,13 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "devDependencies": {
-    "@tscircuit/checks": "0.0.203",
+    "@tscircuit/checks": "0.0.223",
+    "@tscircuit/circuit-json-util": "0.0.116",
     "@types/node": "^26.6.1",
-    "tscircuit": "0.0.2583",
+    "circuit-json-to-bom-csv": "0.0.19",
+    "circuit-json-to-gerber": "0.0.107",
+    "circuit-json-to-pnp-csv": "0.0.18",
+    "tscircuit": "0.0.2646",
     "typescript": "^5.0.0"
   },
   "description": "Compact RP2040 USB-C programmer with JST and TC2030 Tag-Connect SWD, NRST, sensed selectable power, and RGB status",
@@ -29,7 +33,8 @@
     "snapshot:update": "tsci snapshot --update",
     "start": "tsci dev",
     "typecheck": "tsc --noEmit",
-    "test": "bun scripts/check-circuits.ts && bun scripts/check-tag-connect.tsx"
+    "test": "bun scripts/check-circuits.ts && bun scripts/check-tag-connect.tsx",
+    "export:fabrication": "bun scripts/export-fabrication.mjs"
   },
   "types": "dist/index.d.ts"
 }

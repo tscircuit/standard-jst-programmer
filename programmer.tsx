@@ -1,3 +1,4 @@
+import projectConfig from "./tscircuit.config.json";
 import { RoutedTrace } from "./routing/RoutedTrace";
 import { ProgrammerFinishingTraces } from "./routing/ProgrammerFinishingTraces";
 import { TagConnectIdcHeader } from "./footprints/TagConnectIdcHeader";
@@ -29,17 +30,24 @@ export function ProgrammerBoard({
       autorouter="auto-local"
       minTraceToPadEdgeClearance={0.12}
       minViaEdgeToPadEdgeClearance={0.2}
-      minViaPadDiameter={0.45}
-      minViaHoleDiameter={0.2}
+      minViaPadDiameter={0.55}
+      minViaHoleDiameter={0.3}
     >
+      {/* Built-in board information is top-only; keep this back label config-driven. */}
+      <silkscreentext text={projectConfig.projectName.split("-").slice(0, -1).join(" ").toUpperCase()}
+        layer="bottom" pcbX={-7} pcbY={11.8} fontSize={0.85} />
+      <silkscreentext text={projectConfig.projectName.split("-").slice(-1)[0].toUpperCase()}
+        layer="bottom" pcbX={-7} pcbY={10.4} fontSize={0.85} />
+      <silkscreentext text={`V${projectConfig.version}`}
+        layer="bottom" pcbX={-7} pcbY={9} fontSize={0.85} />
       <DiscreteRp2040Support
         placementDrcChecksDisabled={previewPlacement}
         name="MCU"
         autorouter="auto-local"
         minTraceToPadEdgeClearance={0.12}
         minViaEdgeToPadEdgeClearance={0.2}
-        minViaPadDiameter={0.45}
-        minViaHoleDiameter={0.2}
+        minViaPadDiameter={0.55}
+        minViaHoleDiameter={0.3}
       >
         <ProgrammerFinishingTraces />
         <net name="SWCLK" routingPhaseIndex={1} />
@@ -196,9 +204,9 @@ export function ProgrammerBoard({
           schY={0}
           schSheetName="MCU__target"
           schSectionName="swd-tag"
-          noConnect={["SWO"]}
         />
-        <RoutedTrace from=".J4 > .VOUT" to="net.TARGET_POWER" />
+        <RoutedTrace from=".J4 > .V3_3" to="net.V3V3" />
+        <RoutedTrace from=".J4 > .V5" to="net.VBUS" />
         <RoutedTrace from=".J4 > .SWDIO" to=".R_DIO > .pin2" />
         <RoutedTrace from=".J4 > .NRST" to=".R_NRST > .pin2" />
         <RoutedTrace from=".J4 > .SWCLK" to="net.SWCLK" />
@@ -211,7 +219,7 @@ export function ProgrammerBoard({
           fontSize={1}
         />
         <silkscreentext
-          text="1 VOUT / 2 DIO"
+          text="1 3V3 / 2 DIO"
           pcbX={0}
           pcbY={18.6}
           layer="bottom"
@@ -225,7 +233,7 @@ export function ProgrammerBoard({
           fontSize={0.9}
         />
         <silkscreentext
-          text="5 GND / 6 NC"
+          text="5 GND / 6 5V"
           pcbX={0}
           pcbY={14.9}
           layer="bottom"

@@ -5,7 +5,7 @@ import { StandardTagConnectSwd } from "../index";
 const circuit = new Circuit();
 circuit.add(
   <board width={24} height={20} autorouter="auto-local">
-    <StandardTagConnectSwd name="J_TAG" pcbX={0} pcbY={0} noConnect={["SWO"]} />
+    <StandardTagConnectSwd name="J_TAG" pcbX={0} pcbY={0} />
     <resistor
       name="R1"
       resistance="10k"
@@ -46,7 +46,10 @@ circuit.add(
       pcbY={-6}
       pcbRotation={90}
     />
-    <trace from=".J_TAG > .VOUT" to=".R1 > .pin2" />
+    <resistor name="R6" resistance="10k" footprint="0603"
+      pcbX={4} pcbY={6} pcbRotation={90} />
+    <trace from=".J_TAG > .V5" to=".R6 > .pin1" />
+    <trace from=".J_TAG > .V3_3" to=".R1 > .pin2" />
     <trace from=".J_TAG > .SWDIO" to=".R2 > .pin1" />
     <trace from=".J_TAG > .NRST" to=".R3 > .pin2" />
     <trace from=".J_TAG > .SWCLK" to=".R4 > .pin1" />
