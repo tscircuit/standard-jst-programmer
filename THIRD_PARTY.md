@@ -14,14 +14,3 @@ The JST footprints and CAD metadata are imported from JLCPCB/EasyEDA catalog par
 Five-pin JST footprints/models use JLCPCB/EasyEDA C160391 (BM05B-SRSS-TB) and C136657 (SM05B-SRSS-TB); mounting tabs are mechanical. Current monitor C87469 (INA219AIDCNR), RGB LED C41413180 (XL-1615RGBC-2812B-S), and logic buffer C350557 (SN74AHCT1G125DCKR) use the corresponding catalog footprints and models. The LED courtyard is adjusted to a 0.25 mm copper clearance; contact geometry and model alignment are unchanged.
 
 Electrical references: [INA219 datasheet](https://www.ti.com/lit/ds/symlink/ina219.pdf), [AHCT buffer datasheet](https://www.ti.com/lit/ds/symlink/sn74ahct1g125.pdf), and [XINGLIGHT LED datasheet](https://www.lcsc.com/datasheet/C41413180.pdf). Firmware extensions implement INA219 measurements, USB CDC telemetry, addressable RGB status, and the upstream open-drain NRST interface.
-
-## Spy-Bi-Wire
-
-`firmware/sbw/vendor/` is adapted from
-https://github.com/geissdoerfer/spycoprobe at
-`5b3f3e116073f65f3265b74118a3e431be1de264`. Its MIT license is included
-as `firmware/sbw/vendor/LICENSE`; TI BSD-style notices in the transport/JTAG
-sources are retained. The USB descriptors and TinyUSB configuration are adapted
-from that project's TinyUSB examples, retaining their MIT notices.
-The RP2040 HAL, frame protocol, application and host CLI are new for this board.
-No MSPDebug source is included.

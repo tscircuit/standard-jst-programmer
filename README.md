@@ -2,6 +2,8 @@
 
 Use a three-pin JST SH (1 mm) connector for SWD with separate two-pin power, or use the five-pin connector for SWD, power, and NRST in one cable. The SWD connector follows the [Raspberry Pi Debug Connector pinout](https://datasheets.raspberrypi.com/debug/debug-connector-specification.pdf).
 
+The three-pin interface can also be used for **Spy-Bi-Wire (SBW)** with compatible programmer firmware. See [Spy-Bi-Wire wiring and firmware requirements](#use-spy-bi-wire-sbw).
+
 ## Install
 
 ```sh
@@ -135,7 +137,34 @@ Place `StandardTagConnectSwd` on the target's top side with the usual `pcbX`, `p
 | 1 | `.VOUT` | Selected supply input |
 | 2 | `.GND` | Ground |
 
-Use straight-through JST SH cables: **1→1, 2→2, 3→3** for SWD and **1→1, 2→2** for power. Check contact numbers, not wire colors. The three-pin SWD connector accepts Raspberry Pi Debug Probe SWD cables. The separate power connector is this project's extension; the Raspberry Pi Debug Probe does not supply it. The three- and two-pin cables do not carry reset. The five-pin cable adds it.
+Use straight-through JST SH cables: **1→1, 2→2, 3→3** for SWD and **1→1, 2→2** for power. Check contact numbers, not wire colors. The three-pin SWD connector accepts Raspberry Pi Debug Probe SWD cables. The separate power connector is this project's extension; the Raspberry Pi Debug Probe does not supply it. For SWD, the three- and two-pin cables do not carry a separate reset signal; the five-pin cable adds it. For SBW, reset shares the DIO line as described below.
+
+## Use Spy-Bi-Wire (SBW)
+
+The programmer hardware can support Spy-Bi-Wire using the same three-pin JST SH connector. Its clock and bidirectional data lines connect to RP2040 GPIO2 and GPIO3 through 100 Ω series resistors. **SBW requires firmware and a host tool that implement the SBW protocol. The linked v0.5.0 CMSIS-DAP/SWD firmware and OpenOCD configurations do not provide SBW support.** Wiring an MSP430 to the connector does not make SWD firmware speak SBW.
+
+For an SBW-capable MSP430, wire the three-pin connector as follows:
+
+| Three-pin contact | Existing selector | MSP430 target connection |
+| --- | --- | --- |
+| 1 | `.SWCLK` | `TEST / SBWTCK` — SBW clock |
+| 2 | `.GND` | `DVSS / GND` |
+| 3 | `.SWDIO` | `RST / SBWTDIO` — bidirectional SBW data and reset |
+
+The `StandardJstSwdUpward` and `StandardJstSwdSide` component names and selectors stay the same; connect them to SBW nets on the target:
+
+```tsx
+<StandardJstSwdUpward name="J_SBW" pcbX={0} pcbY={0} />
+<trace from=".J_SBW > .SWCLK" to="net.SBWTCK" />
+<trace from=".J_SBW > .GND" to="net.GND" />
+<trace from=".J_SBW > .SWDIO" to="net.SBWTDIO" />
+```
+
+Connect `SBWTCK` and `SBWTDIO` to the MCU pins shown above. Use a straight-through three-way cable and check contact numbers rather than wire colors. **In SBW, reset is carried on the DIO wire.** Do not connect the programmer's separate `.NRST` output to the same target reset pin. Prefer the three-pin signal cable plus separate two-pin power; if adapting the five-pin connector, use pin 4 for SBWTCK, pin 2 for SBWTDIO, pin 3 for ground, and leave pin 5 (NRST) disconnected.
+
+For the MSP430FR2433, select **3V3**, remove the target coin cell, and connect the separate power connector's pin 1 (`.VOUT`) to target VCC and pin 2 to ground. Never apply 5 V to that MCU or connect the programmer's power output across a coin cell. For a separately powered target, leave VOUT disconnected and ensure its supply is compatible with the programmer's fixed 3.3 V signal levels.
+
+Follow the target MCU's SBW requirements for reset pull-up, reset capacitance and cable length. See [TI's MSP430 programming guide](https://www.ti.com/lit/pdf/slau320) and the [MSP430FR2433 datasheet](https://www.ti.com/lit/ds/symlink/msp430fr2433.pdf). This documents the hardware mapping; SBW operation on this board still requires suitable firmware and physical validation.
 
 ## Use the programmer
 
@@ -176,9 +205,3 @@ Treat these as basic measurements: nominal current resolution is 0.1 mA, with sh
 | Red | SWD fault/protocol error, sensor error, or target load above 50 mA. |
 
 Amber indicates traffic, and green indicates idle; neither verifies that a flash operation succeeded. Use your programming tool's result for that. The `XL-1615RGBC-2812B-S` replaces the previous single-color status LED.
-
-## Experimental Spy-Bi-Wire firmware
-
-The same PCB can also program MSP430FR2433 with a separate SBW firmware image.
-This is an experimental, hardware-unvalidated integration, not support in the
-released CMSIS-DAP/SWD UF2. See [SBW setup, flashing and validation](docs/spy-bi-wire.md).
