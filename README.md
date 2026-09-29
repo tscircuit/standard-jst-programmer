@@ -176,3 +176,9 @@ Treat these as basic measurements: nominal current resolution is 0.1 mA, with sh
 | Red | SWD fault/protocol error, sensor error, or target load above 50 mA. |
 
 Amber indicates traffic, and green indicates idle; neither verifies that a flash operation succeeded. Use your programming tool's result for that. The `XL-1615RGBC-2812B-S` replaces the previous single-color status LED.
+
+## Experimental Spy-Bi-Wire firmware
+
+The same PCB can also program MSP430FR2433 with a separate SBW firmware image.
+This is an experimental, hardware-unvalidated integration, not support in the
+released CMSIS-DAP/SWD UF2. See [SBW setup, flashing and validation](docs/spy-bi-wire.md).
