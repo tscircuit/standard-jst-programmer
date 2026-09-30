@@ -1,16 +1,18 @@
 import { StandardTagConnectSwd } from "../tag-connect";
 import type { BoardProps } from "@tscircuit/props";
 import {
+  StandardJstUartUpward,
   StandardJstSwdUpward,
   StandardJstPowerUpward,
   StandardJstSwdResetUpward,
 } from "../connectors";
 export default (props: BoardProps = {}) => (
-  <board {...props} width={20} height={33}>
+  <board {...props} width={20} height={48}>
     <schematicsheet name="upward-connectors" displayName="Upward target connector footprints">
       <schematicsection name="upward-swd" displayName="3-pin SWD" sectionTitleFontSize={0.35} />
       <schematicsection name="upward-power" displayName="2-pin power" sectionTitleFontSize={0.35} />
       <schematicsection name="upward-reset" displayName="5-pin SWD with NRST" sectionTitleFontSize={0.35} />
+      <schematicsection name="upward-uart" displayName="3-pin UART (target)" sectionTitleFontSize={0.35} />
       <schematicsection name="upward-tag" displayName="Tag-Connect target pads" sectionTitleFontSize={0.35} />
     </schematicsheet>
     <StandardJstSwdUpward
@@ -52,6 +54,9 @@ export default (props: BoardProps = {}) => (
       pcbY={2.5}
       fontSize={0.65}
     />
-    <StandardTagConnectSwd name="J4" schX={7} schY={-3} schSheetName="upward-connectors" schSectionName="upward-tag" pcbX={0} pcbY={-11} />
+    <StandardJstUartUpward name="J5" pcbX={0} pcbY={-10}
+      schX={-7} schY={-8} schSheetName="upward-connectors" schSectionName="upward-uart" />
+    <silkscreentext text="UART" pcbX={4.5} pcbY={-10} fontSize={0.7} />
+    <StandardTagConnectSwd name="J4" schX={7} schY={-3} schSheetName="upward-connectors" schSectionName="upward-tag" pcbX={0} pcbY={-18.5} />
   </board>
 );

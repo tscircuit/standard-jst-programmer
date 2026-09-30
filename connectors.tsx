@@ -32,3 +32,21 @@ export function StandardJstSwdResetSide(props: SwdResetConnectorProps) {
 export function StandardJstSwdResetUpward(props: SwdResetConnectorProps) {
  return <JstSwdResetUpward {...props} pinLabels={swdResetPinLabels} />
 }
+
+/** UART labels are local to the board: target RX mates with programmer TX. */
+export const uartPinLabels = { pin1: ["RX"], pin2: ["GND"], pin3: ["TX"] } as const
+export const uartHostPinLabels = { pin1: ["TX"], pin2: ["GND"], pin3: ["RX"] } as const
+export type UartConnectorProps = Omit<ChipProps<typeof uartPinLabels>, "footprint" | "pinLabels"> & {
+  /** Target by default; use host on a programmer for a straight-through cable. */
+  role?: "target" | "host"
+}
+export function StandardJstUartSide({ role = "target", ...props }: UartConnectorProps) {
+  return <JstSwdSide {...props}
+    pinLabels={role === "host" ? uartHostPinLabels : uartPinLabels}
+    uartSilkscreenLabels={role === "host" ? ["TX", "GND", "RX"] : ["RX", "GND", "TX"]} />
+}
+export function StandardJstUartUpward({ role = "target", ...props }: UartConnectorProps) {
+  return <JstSwdUpward {...props}
+    pinLabels={role === "host" ? uartHostPinLabels : uartPinLabels}
+    uartSilkscreenLabels={role === "host" ? ["TX", "GND", "RX"] : ["RX", "GND", "TX"]} />
+}

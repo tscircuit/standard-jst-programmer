@@ -2,7 +2,7 @@ import type { ChipProps } from "@tscircuit/props"
 
 const pinLabels = {pin1: ["pin1"],pin2: ["pin2"],pin3: ["pin3"]} as const
 
-export const JstSwdUpward = (props: ChipProps) => {
+export const JstSwdUpward = ({ uartSilkscreenLabels, ...props }: ChipProps & { uartSilkscreenLabels?: readonly [string, string, string] }) => {
   return (
     <connector standard="jst_sh" pinCount={3}
       pinLabels={pinLabels}
@@ -22,7 +22,10 @@ export const JstSwdUpward = (props: ChipProps) => {
 <silkscreenpath route={[{"x":-2.8007563999999547,"y":-2.2741508999998814},{"x":2.8011374000002434,"y":-2.2741508999998814}]} />
 <silkscreenpath route={[{"x":1.5001240000001417,"y":2.0625181000001476},{"x":2.800146800000107,"y":2.0625181000001476},{"x":2.800146800000107,"y":-0.03752849999978025}]} />
 <silkscreencircle pcbX="1.524mm" pcbY="2.3484967mm" radius="0.127mm" />
-<silkscreentext text="{NAME}" pcbX="-0.013843mm" pcbY="3.4829897mm" anchorAlignment="center" fontSize="1mm" />
+<silkscreentext text="{NAME}" pcbX="-0.013843mm" pcbY={uartSilkscreenLabels ? 4.0 : 3.4829897} anchorAlignment="center" fontSize="1mm" />
+{uartSilkscreenLabels && <silkscreentext text={uartSilkscreenLabels[0]} pcbX={1} pcbY={2.8} fontSize={0.5} />}
+{uartSilkscreenLabels && <silkscreentext text={uartSilkscreenLabels[1]} pcbX={0} pcbY={2.8} fontSize={0.5} />}
+{uartSilkscreenLabels && <silkscreentext text={uartSilkscreenLabels[2]} pcbX={-1} pcbY={2.8} fontSize={0.5} />}
 <courtyardoutline outline={[{"x":-3.1594429999998965,"y":2.7329897000000756},{"x":3.131757000000107,"y":2.7329897000000756},{"x":3.131757000000107,"y":-2.5168102999997473},{"x":-3.1594429999998965,"y":-2.5168102999997473},{"x":-3.1594429999998965,"y":2.7329897000000756}]} />
       </footprint>}
       cadModel={{

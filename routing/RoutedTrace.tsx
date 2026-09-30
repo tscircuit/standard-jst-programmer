@@ -15,5 +15,5 @@ export function RoutedTrace(props: TraceProps) {
     ? getSchematicSignalLabel(props.from, props.to)
     : undefined;
   return <trace {...props} schDisplayLabel={label ?? props.schDisplayLabel}
-    routingPhaseIndex={index < 0 ? 2 : index + 3} />;
+    routingPhaseIndex={props.routingPhaseIndex ?? (index < 0 ? 2 : index + 3)} />;
 }

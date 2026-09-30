@@ -1,3 +1,5 @@
+import { fanoutTracePath } from "@tscircuit/props";
+import uartPaths from "./routing/uart-paths.json";
 import projectConfig from "./tscircuit.config.json";
 import { RoutedTrace } from "./routing/RoutedTrace";
 import { ProgrammerFinishingTraces } from "./routing/ProgrammerFinishingTraces";
@@ -8,6 +10,7 @@ import { SN74AHCT1G125DCKR } from "./footprints/SN74AHCT1G125DCKR";
 import { JS102011SAQN } from "./footprints/PowerSelector";
 import { DiscreteRp2040Support } from "./rp2040/DiscreteRp2040Support";
 import {
+  StandardJstUartSide,
   StandardJstSwdSide,
   StandardJstPowerSide,
   StandardJstSwdResetSide,
@@ -25,7 +28,7 @@ export function ProgrammerBoard({
       placementDrcChecksDisabled={previewPlacement}
       doubleSidedAssembly={false}
       layers={4}
-      width={26}
+      width={34}
       height={42}
       autorouter="auto-local"
       minTraceToPadEdgeClearance={0.12}
@@ -50,11 +53,17 @@ export function ProgrammerBoard({
         minViaHoleDiameter={0.3}
       >
         <ProgrammerFinishingTraces />
+        {/* Route new UART copper after all checked existing signal paths. */}
+        <autoroutingphase name="uart" phaseIndex={100} connections={[]}
+          pcbTracePaths={uartPaths.map(path => fanoutTracePath.parse(path))}
+          minTraceToPadEdgeClearance={0.16} minViaEdgeToPadEdgeClearance={0.25}
+          minViaHoleEdgeToViaHoleEdgeClearance={0.4} />
         <net name="SWCLK" routingPhaseIndex={1} />
         <schematicsheet name="MCU__target" displayName="03 - Target programming connectors">
           <schematicsection sectionTitleFontSize={0.35} name="swd-signals" displayName="SWD series resistors" />
           <schematicsection sectionTitleFontSize={0.35} name="swd-three" displayName="Pico-compatible SWD" />
           <schematicsection sectionTitleFontSize={0.35} name="swd-five" displayName="SWD with power and NRST" />
+          <schematicsection sectionTitleFontSize={0.35} name="uart" displayName="3.3 V UART" />
           <schematicsection sectionTitleFontSize={0.35} name="swd-tag" displayName="Tag-Connect cable" />
         </schematicsheet>
         <schematicsheet name="MCU__services" displayName="04 - Target power and status">
@@ -63,6 +72,21 @@ export function ProgrammerBoard({
           <schematicsection sectionTitleFontSize={0.35} name="rgb" displayName="Programming status RGB" />
           <schematicsection sectionTitleFontSize={0.35} name="MCU__indicator" displayName="Power indicator" />
         </schematicsheet>
+        <StandardJstUartSide name="J5" role="host"
+          pcbX={-13.7} pcbY={1.2} pcbRotation={270}
+          schX={8} schY={-6} schSheetName="MCU__target" schSectionName="uart" />
+        <resistor name="R_UART_TX" resistance="100" footprint="0402"
+          pcbX={-5.8} pcbY={4.7} schX={3} schY={-5}
+          schSheetName="MCU__target" schSectionName="uart" />
+        <resistor name="R_UART_RX" resistance="100" footprint="0402"
+          pcbX={-5.8} pcbY={5.9} schX={3} schY={-7}
+          schSheetName="MCU__target" schSectionName="uart" />
+        <RoutedTrace routingPhaseIndex={100} from=".U1 > .GPIO8" to=".R_UART_TX > .pin1" thickness={0.1} />
+        <RoutedTrace routingPhaseIndex={100} from=".U1 > .GPIO9" to=".R_UART_RX > .pin1" thickness={0.1} />
+        <RoutedTrace routingPhaseIndex={100} from=".R_UART_TX > .pin2" to=".J5 > .TX" />
+        <RoutedTrace routingPhaseIndex={100} from=".R_UART_RX > .pin2" to=".J5 > .RX" />
+        <RoutedTrace from=".J5 > .GND" to="net.GND" />
+        <silkscreentext text="UART" pcbX={-13.7} pcbY={5.5} fontSize={0.65} />
         <StandardJstSwdSide
           name="J1"
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}

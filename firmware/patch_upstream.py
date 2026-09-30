@@ -31,16 +31,31 @@ s=replace(s,'    DAP_Setup();','    DAP_Setup();\n    status_monitor_init();')
 s=s.replace('        tud_task();','        tud_task();\n        status_monitor_tick();')
 s=s.replace('DAP_ProcessCommand(RxDataBuffer, TxDataBuffer);', 'DAP_ProcessCommand(RxDataBuffer, TxDataBuffer);\n    status_monitor_dap(RxDataBuffer, TxDataBuffer);')
 save('src/main.c',s)
-# Telemetry and RGB run on USB core; no new thread races with TinyUSB CDC calls.
+# Keep upstream UART CDC0; telemetry uses independent CDC1 on the USB core.
 s=original('src/cdc_uart.c')
-s=replace(s, 'static uint8_t tx_buf[32];\nstatic uint8_t rx_buf[32];', '// USB CDC carries target-current telemetry on this board.')
-a=s.index('bool cdc_task(void)');start=s.index('{',a);depth=1;end=start+1
-while depth:
-    if s[end]=='{':depth+=1
-    if s[end]=='}':depth-=1
-    end+=1
-s=s[:start]+'{ return false; }'+s[end:]
+for signature in [
+    'void tud_cdc_line_coding_cb(uint8_t itf, cdc_line_coding_t const* line_coding)',
+    'void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)',
+]:
+    s=replace(s, signature+'\n{', signature+'\n{\n  if (itf != 0) return;')
+s=replace(s, 'void tud_cdc_send_break_cb(uint8_t itf, uint16_t wValue) {',
+    'void tud_cdc_send_break_cb(uint8_t itf, uint16_t wValue) {\n  if (itf != 0) return;')
 save('src/cdc_uart.c',s)
+s=original('src/tusb_config.h')
+s=replace(s, '#define CFG_TUD_CDC             1', '#define CFG_TUD_CDC             2')
+save('src/tusb_config.h',s)
+s=original('src/usb_descriptors.c')
+s=replace(s, '  ITF_NUM_RESET,', '  ITF_NUM_TELEMETRY_COM,\n  ITF_NUM_TELEMETRY_DATA,\n  ITF_NUM_RESET,')
+s=s.replace('TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN +', 'TUD_CONFIG_DESC_LEN + 2 * TUD_CDC_DESC_LEN +')
+s=replace(s, '  // Reset interface',
+    '  // Independent telemetry CDC1: endpoints do not overlap UART/DAP.\n'
+    '  TUD_CDC_DESCRIPTOR(ITF_NUM_TELEMETRY_COM, 8, 0x86, 64, 0x07, 0x87, 64),\n'
+    '  // Reset interface')
+s=replace(s, 'CONFIG_TOTAL_LEN - TUD_RPI_RESET_DESC_LEN - TUD_CDC_DESC_LEN +',
+    'CONFIG_TOTAL_LEN - TUD_RPI_RESET_DESC_LEN - 2 * TUD_CDC_DESC_LEN +')
+s=replace(s, '  "Reset", // 7: Interface descriptor for Reset',
+    '  "Reset", // 7: Interface descriptor for Reset\n  "Target power telemetry", // 8: CDC1')
+save('src/usb_descriptors.c',s)
 s=original('src/tusb_edpt_handler.c')
 s='#include "status_monitor.h"\n'+s
 anchor='resp_len = DAP_ExecuteCommand(RD_SLOT_PTR(USBRequestBuffer), WR_SLOT_PTR(USBResponseBuffer)) & 0xffff;'

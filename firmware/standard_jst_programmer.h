@@ -5,8 +5,8 @@
 pico_board_cmake_set(PICO_PLATFORM, rp2040)
 #define STANDARD_JST_PROGRAMMER 1
 #define PICO_DEFAULT_UART 1
-#define PICO_DEFAULT_UART_TX_PIN 4
-#define PICO_DEFAULT_UART_RX_PIN 5
+#define PICO_DEFAULT_UART_TX_PIN 8
+#define PICO_DEFAULT_UART_RX_PIN 9
 // W25Q16JV: 2 MiB, standard Winbond quad-read second-stage bootloader.
 #define PICO_BOOT_STAGE2_CHOOSE_W25Q080 1
 #define PICO_FLASH_SPI_CLKDIV 4
