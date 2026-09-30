@@ -1,6 +1,7 @@
 import fs from "node:fs/promises"
 import path from "node:path"
 import assert from "node:assert/strict"
+import { execFileSync } from "node:child_process"
 import { createHash } from "node:crypto"
 import { runAllChecks } from "@tscircuit/checks"
 import { convertCircuitJsonToGerberFiles } from "circuit-json-to-gerber"
@@ -31,7 +32,9 @@ await fs.mkdir(path.join(out, "gerbers"), { recursive: true })
 await fs.mkdir(path.join(out, "assembly"), { recursive: true })
 await fs.mkdir(path.join(out, "validation"), { recursive: true })
 const write = (name, data) => fs.writeFile(path.join(out, name), data)
-const files = convertCircuitJsonToGerberFiles(circuit, { flip_y_axis: false })
+// Suppress an imported zero-width reference stroke; zero-size draw apertures are invalid Gerber.
+const fabricationCircuit = circuit.filter(e => !(e.type === "pcb_silkscreen_path" && e.stroke_width === 0))
+const files = convertCircuitJsonToGerberFiles(fabricationCircuit, { flip_y_axis: false })
 assert.equal(Object.keys(files).filter(n => /Cu\.gbr$/.test(n)).length, 4)
 assert(Object.entries(files).filter(([name]) => name.endsWith(".drl")).some(([,data]) => /T\d+C0\.300000/.test(data)))
 assert(!Object.entries(files).filter(([name]) => name.endsWith(".drl")).some(([,data]) => /T\d+C0\.200000/.test(data)))
@@ -44,7 +47,8 @@ const bom = await convertCircuitJsonToBomRows({ circuitJson: circuit })
 for (const row of bom) {
   const source = circuit.find(e => e.type === "source_component" && e.name === row.designator)
   if (source.manufacturer_part_number) row.comment = source.manufacturer_part_number
-  if (row.designator === "L_AVDD") row.comment = "Ferrite bead, 600 ohm at 100 MHz; verify supplier C1002"
+  if (row.designator === "L_AVDD") row.comment = "GZ1608D601TF, ferrite bead 600 ohm at 100 MHz"
+  if (row.designator === "L_AVDD") row.value = "600 ohm at 100 MHz"
 }
 await write("assembly/BOM.csv", convertBomRowsToCsv(bom))
 await write("assembly/CPL-pcb-rotations.csv", convertCircuitJsonToPickAndPlaceCsv(circuit, { flip_y_axis: false }))
@@ -67,8 +71,11 @@ await write("validation/independent-checks.json", JSON.stringify(checks, null, 2
 await write("validation/build-warnings.json", JSON.stringify(circuit.filter(e => e.type.endsWith("_warning")), null, 2))
 const manifest = {
   source: "https://tscircuit.com/tscircuit/standard-jst-programmer",
-  sourceVersion: config.version, sourceReleaseId: "42e3cd0d-cfd0-4d2a-a0ea-b02aa3ca064c",
-  basedOnVersion: "0.7.0",
+  sourceVersion: config.version,
+  sourceRepository: "https://github.com/tscircuit/standard-jst-programmer",
+  sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+  sourceDirty: execFileSync("git", ["status", "--porcelain", "--untracked-files=no"], { encoding: "utf8" }).trim().length > 0,
+  publishedRegistryRelease: false, basedOnVersion: "0.7.1",
   tscircuit: "0.0.2646", checks: "0.0.223", gerberExporter: "0.0.107",
   designVersion: config.version, viaCount: vias.length, viaDrillMm: 0.3, viaPadMm: 0.55,
   backLabel: `${config.projectName} v${config.version}`,

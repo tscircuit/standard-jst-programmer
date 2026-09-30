@@ -92,6 +92,14 @@ export function ProgrammerBoard({
         <silkscreentext text="TX" pcbX={-6.3} pcbY={-9.5} pcbRotation={90} fontSize={0.5} />
         <silkscreentext text="GND" pcbX={-6.3} pcbY={-10.5} pcbRotation={90} fontSize={0.5} />
         <silkscreentext text="RX" pcbX={-6.3} pcbY={-11.5} pcbRotation={90} fontSize={0.5} />
+        {/* Full-size back-side legend remains readable after fabrication. */}
+        <silkscreentext text="UART" layer="bottom" pcbX={-10.2} pcbY={-6.5} fontSize={1.7} />
+        <silkscreentext text="TX" layer="bottom" pcbX={-10.2} pcbY={-8.5} fontSize={1.7} />
+        <silkscreentext text="GND" layer="bottom" pcbX={-10.2} pcbY={-10.5} fontSize={1.7} />
+        <silkscreentext text="RX" layer="bottom" pcbX={-10.2} pcbY={-12.5} fontSize={1.7} />
+        <silkscreenpath layer="bottom" strokeWidth={0.15} route={[{ x: -7.65, y: -9.5 }, { x: -8.4, y: -9.5 }, { x: -8.8, y: -8.5 }]} />
+        <silkscreenpath layer="bottom" strokeWidth={0.15} route={[{ x: -7.65, y: -10.5 }, { x: -8.3, y: -10.5 }]} />
+        <silkscreenpath layer="bottom" strokeWidth={0.15} route={[{ x: -7.65, y: -11.5 }, { x: -8.4, y: -11.5 }, { x: -8.8, y: -12.5 }]} />
         <StandardJstSwdSide
           name="J1"
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}
