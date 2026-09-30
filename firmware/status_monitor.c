@@ -33,7 +33,7 @@ static bool read_reg(uint8_t reg, uint16_t *value) {
 static void rgb(uint8_t red, uint8_t green, uint8_t blue) {
     uint32_t grb = ((uint32_t)green << 16) | ((uint32_t)red << 8) | blue;
     if (grb == last_color) return;
-    // Calls are separated by >= 10 ms, exceeding the LED's 200 us reset time.
+    // Calls are separated by >= 10 ms, exceeding the LED's >280 us reset time.
     pio_sm_put_blocking(pio1, rgb_sm, grb << 8);
     last_color = grb;
 }

@@ -5,7 +5,7 @@ import { RoutedTrace } from "./routing/RoutedTrace";
 import { ProgrammerFinishingTraces } from "./routing/ProgrammerFinishingTraces";
 import { TagConnectIdcHeader } from "./footprints/TagConnectIdcHeader";
 import { INA219AIDCNR } from "./footprints/INA219AIDCNR";
-import { XL_1615RGBC_2812B_S } from "./footprints/XL_1615RGBC_2812B_S";
+import { WS2812C_2020_V6 } from "./footprints/WS2812C_2020_V6";
 import { SN74AHCT1G125DCKR } from "./footprints/SN74AHCT1G125DCKR";
 import { JS102011SAQN } from "./footprints/PowerSelector";
 import { DiscreteRp2040Support } from "./rp2040/DiscreteRp2040Support";
@@ -390,8 +390,8 @@ export function ProgrammerBoard({
           name="R_SHUNT"
           resistance="0.1"
           footprint="0603"
-          manufacturerPartNumber="RL0603FR-070R1L"
-          supplierPartNumbers={{ jlcpcb: ["C326946"] }}
+          manufacturerPartNumber="0603WAF100LT5E"
+          supplierPartNumbers={{ jlcpcb: ["C111027"] }}
           pcbX={-0.5}
           pcbY={-11.5}
           pcbRotation={270}
@@ -459,10 +459,10 @@ export function ProgrammerBoard({
         <RoutedTrace from=".C_SENSE > .pin1" to="net.V3V3" />
         <RoutedTrace from=".C_SENSE > .pin2" to="net.GND" />
 
-        <XL_1615RGBC_2812B_S
+        <WS2812C_2020_V6
           name="D_RGB"
-          pcbX={10.5}
-          pcbY={4}
+          pcbX={10.8}
+          pcbY={4.1}
           schX={11}
           schY={-2}
           schSheetName="MCU__services"

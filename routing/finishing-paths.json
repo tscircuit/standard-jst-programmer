@@ -6027,55 +6027,48 @@
       },
       {
         "route_type": "wire",
-        "x": 10.11071088507817,
-        "y": 2.88766088395623,
+        "x": 10.45,
+        "y": 2.8,
         "width": 0.1,
         "layer": "top"
       },
       {
         "route_type": "wire",
-        "x": 10.58890568488105,
-        "y": 3.3812885922461913,
+        "x": 10.8,
+        "y": 3.15,
         "width": 0.1,
         "layer": "top"
       },
       {
         "route_type": "wire",
-        "x": 10.582472248646525,
-        "y": 3.44993768628116,
+        "x": 10.8,
+        "y": 4.0,
         "width": 0.1,
         "layer": "top"
       },
       {
         "route_type": "wire",
-        "x": 10.582472248646525,
-        "y": 3.9324852486465245,
-        "width": 0.1,
-        "layer": "top"
-      },
-      {
-        "route_type": "wire",
-        "x": 11.1249924,
-        "y": 4.4750054,
+        "x": 11.715,
+        "y": 4.65,
         "width": 0.1,
         "layer": "top"
       }
     ]
   },
   {
-    "connection": "D_RGB.pin2",
+    "connection": "D_RGB.pin4",
     "route": [
       {
         "route_type": "wire",
-        "x": 11.1249924,
-        "y": 4.4750054,
+        "x": 11.715,
+        "y": 4.65,
         "width": 0.1,
         "layer": "top"
       },
       {
         "route_type": "wire",
-        "x": 11.1249924,
-        "y": 5.24310436243565,
+        "x": 10.85,
+        "y": 5.2,
         "width": 0.1,
         "layer": "top"
       },
@@ -9113,15 +9106,29 @@
       },
       {
         "route_type": "wire",
-        "x": 10.484,
+        "x": 9.9,
         "y": 5.127,
         "width": 0.1,
         "layer": "bottom"
       },
       {
+        "route_type": "wire",
+        "x": 9.03,
+        "y": 4.257,
+        "width": 0.1,
+        "layer": "bottom"
+      },
+      {
+        "route_type": "wire",
+        "x": 9.03,
+        "y": 3.65,
+        "width": 0.1,
+        "layer": "bottom"
+      },
+      {
         "route_type": "via",
-        "x": 10.484,
-        "y": 5.127,
+        "x": 9.03,
+        "y": 3.65,
         "from_layer": "bottom",
         "to_layer": "top",
         "via_diameter": 0.55,
@@ -9129,62 +9136,27 @@
       },
       {
         "route_type": "wire",
-        "x": 10.484,
-        "y": 5.127,
+        "x": 9.03,
+        "y": 3.65,
         "width": 0.1,
         "layer": "top"
       },
       {
         "route_type": "wire",
-        "x": 10.419333573365703,
-        "y": 5.062333573365703,
-        "width": 0.1,
-        "layer": "top"
-      },
-      {
-        "route_type": "wire",
-        "x": 10.419333573365703,
-        "y": 5.049034203336702,
-        "width": 0.1,
-        "layer": "top"
-      },
-      {
-        "route_type": "wire",
-        "x": 10.296059927389114,
-        "y": 4.925760557360113,
-        "width": 0.1,
-        "layer": "top"
-      },
-      {
-        "route_type": "wire",
-        "x": 10.325140257749231,
-        "y": 4.852299098427327,
-        "width": 0.1,
-        "layer": "top"
-      },
-      {
-        "route_type": "wire",
-        "x": 10.32497580927165,
-        "y": 3.945951330340985,
-        "width": 0.1,
-        "layer": "top"
-      },
-      {
-        "route_type": "wire",
-        "x": 9.8750076,
-        "y": 3.5249946,
+        "x": 9.885,
+        "y": 3.55,
         "width": 0.1,
         "layer": "top"
       }
     ]
   },
   {
-    "connection": "D_RGB.pin3",
+    "connection": "D_RGB.pin2",
     "route": [
       {
         "route_type": "wire",
-        "x": 9.8750076,
-        "y": 3.5249946,
+        "x": 9.885,
+        "y": 3.55,
         "width": 0.15,
         "layer": "top"
       },

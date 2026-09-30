@@ -23,5 +23,6 @@ cmake -S "$firmware_work/debugprobe" -B "$firmware_work/build" \
   -DDEBUG_ON_PICO=OFF -DCMAKE_BUILD_TYPE=Release
 cmake --build "$firmware_work/build" --parallel 4
 python3 "$repo_root/scripts/check-firmware-usb.py" "$firmware_work/build/debugprobe.elf"
+python3 "$repo_root/scripts/check-firmware-rgb.py" "$firmware_work/build/status_rgb.pio.h"
 mkdir -p "$repo_root/dist/firmware"
 cp "$firmware_work/build/debugprobe.uf2" "$repo_root/dist/firmware/standard-jst-programmer.uf2"

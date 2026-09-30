@@ -1,12 +1,14 @@
-; XL-1615RGBC-2812B-S: GRB/MSB-first, 0.3/0.9 us high, 1.2 us bit period.
-; At 10 MHz each path is 12 cycles. An empty FIFO stalls with the pin low.
+; WS2812C-2020-V6: GRB/MSB-first; T0H/T0L = 0.3/0.9 us,
+; T1H/T1L = 0.6/0.6 us. At 10 MHz each path is 12 cycles.
+; An empty FIFO stalls with the pin low; frames are separated by >= 10 ms.
 .program status_rgb
 .side_set 1
 .wrap_target
 bitloop:
     out x, 1       side 0 [2]
     jmp !x bit_zero    side 1 [2]
-    jmp bitloop    side 1 [5]
+    nop            side 1 [2]
+    jmp bitloop    side 0 [2]
 bit_zero:
     nop            side 0 [5]
 .wrap
