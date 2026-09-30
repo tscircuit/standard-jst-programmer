@@ -572,8 +572,9 @@ for (const variant of ["side", "upward", "programmer"]) {
     const pad = pads.find(e => e.pcb_port_id === pp.pcb_port_id);
     const label = cj.find(e => e.type === "pcb_silkscreen_text" && (variant === "programmer" || e.pcb_component_id === pc.pcb_component_id) && e.text === text);
     assert(label, `${variant}: UART ${text} is printed beside its connector pad`);
-    // Programmer host is rotated 180 degrees; all labels follow pad X coordinates.
-    assert(Math.abs(label.anchor_position.x - pad.x) < 0.001);
+    // Programmer host faces left; its pin labels follow pad Y coordinates.
+    if (variant === "programmer") assert(Math.abs(label.anchor_position.y - pad.y) < 0.001);
+    else assert(Math.abs(label.anchor_position.x - pad.x) < 0.001);
   }
 }
 assert(circuit.some(e => e.type === "pcb_silkscreen_text" && e.text === "UART"));

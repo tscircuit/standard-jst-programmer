@@ -266,7 +266,7 @@ import { ProgrammerBoard } from "@tsci/tscircuit.standard-jst-programmer"
 export default () => <ProgrammerBoard />
 ```
 
-`ProgrammerBoard` contains a `<board>`; use it as the root circuit. USB-C and the SWD/power connectors are on opposite edges. J5 UART is a side-entry connector beside USB-C on the upper edge. The programmer retains its original 26 × 42 mm outline. The default package preview displays the standalone programmer fabrication board. The upward and side connector examples remain available as separate circuits.
+`ProgrammerBoard` contains a `<board>`; use it as the root circuit. USB-C and the SWD/power connectors are on opposite edges. J5 UART faces the left edge below the raised power switch, separated from the USB-C input. The programmer retains its original 26 × 42 mm outline. The default package preview displays the standalone programmer fabrication board. The upward and side connector examples remain available as separate circuits.
 
 Connect USB-C to your computer and the SWD cable to your target. Build this revision’s UF2 firmware with `bash firmware/build.sh`; the output is `dist/firmware/standard-jst-programmer.uf2`. Hold BOOT while connecting USB, then copy the UF2 to the mounted drive. Use the [OpenOCD configuration](https://github.com/tscircuit/standard-jst-programmer/tree/main/firmware). Use `firmware/openocd.cfg` with the three-pin cable, or `firmware/openocd-reset.cfg` with the five-pin cable for hardware reset.
 

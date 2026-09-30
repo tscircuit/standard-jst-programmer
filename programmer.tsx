@@ -73,11 +73,11 @@ export function ProgrammerBoard({
           <schematicsection sectionTitleFontSize={0.35} name="MCU__indicator" displayName="Power indicator" />
         </schematicsheet>
         <StandardJstUartSide name="J5" role="host"
-          pcbX={-8.5} pcbY={17.9} pcbRotation={180}
+          pcbX={-9.7} pcbY={-10.5} pcbRotation={270}
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}
           schX={8} schY={-6} schSheetName="MCU__target" schSectionName="uart" />
         <resistor name="R_UART_TX" resistance="100" footprint="0402"
-          pcbX={-5.8} pcbY={4.7} schX={3} schY={-5}
+          pcbX={-5.4} pcbY={4.7} schX={3} schY={-5}
           schSheetName="MCU__target" schSectionName="uart" />
         <resistor name="R_UART_RX" resistance="100" footprint="0402"
           pcbX={-5.8} pcbY={5.9} schX={3} schY={-7}
@@ -87,11 +87,11 @@ export function ProgrammerBoard({
         <RoutedTrace routingPhaseIndex={100} from=".R_UART_TX > .pin2" to=".J5 > .TX" />
         <RoutedTrace routingPhaseIndex={100} from=".R_UART_RX > .pin2" to=".J5 > .RX" />
         <RoutedTrace from=".J5 > .GND" to="net.GND" />
-        <silkscreentext text="PWR" pcbX={-11.3} pcbY={2.9} fontSize={0.55} />
-        <silkscreentext text="UART" pcbX={-12.2} pcbY={17.5} pcbRotation={90} fontSize={0.65} />
-        <silkscreentext text="TX" pcbX={-7.5} pcbY={14.65} fontSize={0.5} />
-        <silkscreentext text="GND" pcbX={-8.5} pcbY={14.65} fontSize={0.5} />
-        <silkscreentext text="RX" pcbX={-9.5} pcbY={14.65} fontSize={0.5} />
+        <silkscreentext text="PWR" pcbX={-8} pcbY={18.5} fontSize={0.55} />
+        <silkscreentext text="UART" pcbX={-11.5} pcbY={-6.9} pcbRotation={90} fontSize={0.65} />
+        <silkscreentext text="TX" pcbX={-6.3} pcbY={-9.5} pcbRotation={90} fontSize={0.5} />
+        <silkscreentext text="GND" pcbX={-6.3} pcbY={-10.5} pcbRotation={90} fontSize={0.5} />
+        <silkscreentext text="RX" pcbX={-6.3} pcbY={-11.5} pcbRotation={90} fontSize={0.5} />
         <StandardJstSwdSide
           name="J1"
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}
@@ -105,10 +105,11 @@ export function ProgrammerBoard({
         />
         <resistor
           name="R_CLK"
+          pcbStyle={{ silkscreenTextVisibility: "hidden" }}
           resistance="100"
           footprint="0402"
-          pcbX={-6.5}
-          pcbY={1.8}
+          pcbX={-10.5}
+          pcbY={20}
           schX={-8}
           schY={4}
           schSheetName="MCU__target"
@@ -116,10 +117,11 @@ export function ProgrammerBoard({
         />
         <resistor
           name="R_DIO"
+          pcbStyle={{ silkscreenTextVisibility: "hidden" }}
           resistance="100"
           footprint="0402"
-          pcbX={-6.5}
-          pcbY={0.6}
+          pcbX={-10.8}
+          pcbY={-5.7}
           schX={-8}
           schY={1}
           schSheetName="MCU__target"
@@ -138,8 +140,8 @@ export function ProgrammerBoard({
         {/* Datasheet top view: actuator toward pin 1 selects 2–3. Rotation 270° makes that the upper (5 V) position. */}
         <JS102011SAQN
           name="SW_PWR"
-          pcbX={-8.5}
-          pcbY={-7}
+          pcbX={-9.1}
+          pcbY={0}
           pcbRotation={270}
           schX={-9}
           schY={5}
@@ -195,8 +197,8 @@ export function ProgrammerBoard({
           name="R_NRST"
           resistance="100"
           footprint="0402"
-          pcbX={-8.7}
-          pcbY={3}
+          pcbX={-11}
+          pcbY={16}
           schX={-8}
           schY={-2}
           schSheetName="MCU__target"
@@ -527,9 +529,9 @@ export function ProgrammerBoard({
         <RoutedTrace from=".C_RGB > .pin2" to="net.GND" />
         <RoutedTrace from=".C_RGB_BUF > .pin1" to="net.VBUS" />
         <RoutedTrace from=".C_RGB_BUF > .pin2" to="net.GND" />
-        <silkscreentext text="5V" pcbX={-10.5} pcbY={-1.6} fontSize={0.9} />
-        <silkscreentext text="3V3" pcbX={-10.5} pcbY={-12.2} fontSize={0.9} />
-        <silkscreentext text="SWD" pcbX={-8.5} pcbY={-13} fontSize={0.7} />
+        <silkscreentext text="5V" pcbX={-10.5} pcbY={5.4} fontSize={0.9} />
+        <silkscreentext text="3V3" pcbX={-10.5} pcbY={-4.95} fontSize={0.55} />
+        <silkscreentext text="SWD" pcbX={-6} pcbY={-13} fontSize={0.6} />
         <silkscreentext
           text="1:CLK 2:GND"
           pcbX={-8.5}
