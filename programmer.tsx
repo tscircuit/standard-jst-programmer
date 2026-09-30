@@ -5,7 +5,7 @@ import { RoutedTrace } from "./routing/RoutedTrace";
 import { ProgrammerFinishingTraces } from "./routing/ProgrammerFinishingTraces";
 import { TagConnectIdcHeader } from "./footprints/TagConnectIdcHeader";
 import { INA219AIDCNR } from "./footprints/INA219AIDCNR";
-import { XL_1615RGBC_2812B_S } from "./footprints/XL_1615RGBC_2812B_S";
+import { WS2812C_2020_V6 } from "./footprints/WS2812C_2020_V6";
 import { SN74AHCT1G125DCKR } from "./footprints/SN74AHCT1G125DCKR";
 import { JS102011SAQN } from "./footprints/PowerSelector";
 import { DiscreteRp2040Support } from "./rp2040/DiscreteRp2040Support";
@@ -92,6 +92,14 @@ export function ProgrammerBoard({
         <silkscreentext text="TX" pcbX={-6.3} pcbY={-9.5} pcbRotation={90} fontSize={0.5} />
         <silkscreentext text="GND" pcbX={-6.3} pcbY={-10.5} pcbRotation={90} fontSize={0.5} />
         <silkscreentext text="RX" pcbX={-6.3} pcbY={-11.5} pcbRotation={90} fontSize={0.5} />
+        {/* Full-size back-side legend remains readable after fabrication. */}
+        <silkscreentext text="UART" layer="bottom" pcbX={-10.2} pcbY={-6.5} fontSize={1.7} />
+        <silkscreentext text="TX" layer="bottom" pcbX={-10.2} pcbY={-8.5} fontSize={1.7} />
+        <silkscreentext text="GND" layer="bottom" pcbX={-10.2} pcbY={-10.5} fontSize={1.7} />
+        <silkscreentext text="RX" layer="bottom" pcbX={-10.2} pcbY={-12.5} fontSize={1.7} />
+        <silkscreenpath layer="bottom" strokeWidth={0.15} route={[{ x: -7.65, y: -9.5 }, { x: -8.4, y: -9.5 }, { x: -8.8, y: -8.5 }]} />
+        <silkscreenpath layer="bottom" strokeWidth={0.15} route={[{ x: -7.65, y: -10.5 }, { x: -8.3, y: -10.5 }]} />
+        <silkscreenpath layer="bottom" strokeWidth={0.15} route={[{ x: -7.65, y: -11.5 }, { x: -8.4, y: -11.5 }, { x: -8.8, y: -12.5 }]} />
         <StandardJstSwdSide
           name="J1"
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}
@@ -382,8 +390,8 @@ export function ProgrammerBoard({
           name="R_SHUNT"
           resistance="0.1"
           footprint="0603"
-          manufacturerPartNumber="RL0603FR-070R1L"
-          supplierPartNumbers={{ jlcpcb: ["C326946"] }}
+          manufacturerPartNumber="0603WAF100LT5E"
+          supplierPartNumbers={{ jlcpcb: ["C111027"] }}
           pcbX={-0.5}
           pcbY={-11.5}
           pcbRotation={270}
@@ -451,10 +459,10 @@ export function ProgrammerBoard({
         <RoutedTrace from=".C_SENSE > .pin1" to="net.V3V3" />
         <RoutedTrace from=".C_SENSE > .pin2" to="net.GND" />
 
-        <XL_1615RGBC_2812B_S
+        <WS2812C_2020_V6
           name="D_RGB"
-          pcbX={10.5}
-          pcbY={4}
+          pcbX={10.8}
+          pcbY={4.1}
           schX={11}
           schY={-2}
           schSheetName="MCU__services"

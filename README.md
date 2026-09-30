@@ -296,4 +296,4 @@ Treat these as basic measurements: nominal current resolution is 0.1 mA, with sh
 | Amber | Recent SWD activity, including programming. |
 | Red | SWD fault/protocol error, sensor error, or target load above 50 mA. |
 
-Amber indicates traffic, and green indicates idle; neither verifies that a flash operation succeeded. Use your programming tool's result for that. The `XL-1615RGBC-2812B-S` replaces the previous single-color status LED.
+Amber indicates traffic, and green indicates idle; neither verifies that a flash operation succeeded. Use your programming tool's result for that. The `WS2812C-2020-V6` (JLCPCB C55109522) is an Economic-compatible addressable status LED. The 0.1 Ω shunt uses stocked C111027 without changing current calibration. Use the v0.8.1 fabrication package and firmware together; the LED land pattern and timing differ from v0.8.0.

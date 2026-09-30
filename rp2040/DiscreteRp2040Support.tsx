@@ -615,6 +615,7 @@ export const DiscreteRp2040Support = ({
     />
     <inductor
       name="L_AVDD"
+      manufacturerPartNumber="GZ1608D601TF"
       inductance="600ohm@100MHz"
       footprint="0603"
       schSheetName={`${name}__processor`}

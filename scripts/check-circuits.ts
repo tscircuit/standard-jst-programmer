@@ -414,8 +414,9 @@ assert.notEqual(
   "Probe LED current excluded from measurement",
 );
 for (const [name, cid] of [
-  ["D_RGB", "C41413180"],
+  ["D_RGB", "C55109522"],
   ["U_SENSE", "C87469"],
+  ["R_SHUNT", "C111027"],
   ["U_RGB", "C350557"],
 ])
   assert.deepEqual(
@@ -424,8 +425,22 @@ for (const [name, cid] of [
   );
 assert.equal(
   components.find((e) => e.name === "D_RGB").manufacturer_part_number,
-  "XL-1615RGBC-2812B-S",
+  "WS2812C-2020-V6",
 );
+assert.equal(components.find((e) => e.name === "R_SHUNT").manufacturer_part_number, "0603WAF100LT5E");
+// The replacement LED has a different numbered pin map from the retired LED.
+for (const [number, label, x, y] of [
+  [1, "DO", 9.885, 4.65], [2, "GND", 9.885, 3.55],
+  [3, "DI", 11.715, 3.55], [4, "VDD", 11.715, 4.65],
+] as const) {
+  const sp = circuit.find((e) => e.type === "source_port" && e.source_port_id === port("D_RGB", label));
+  assert.equal(sp.pin_number, number);
+  const pp = circuit.find((e) => e.type === "pcb_port" && e.source_port_id === sp.source_port_id);
+  const pad = circuit.find((e) => e.type === "pcb_smtpad" && e.pcb_port_id === pp.pcb_port_id);
+  assert(Math.abs(pad.x - x) < 0.00001 && Math.abs(pad.y - y) < 0.00001);
+  assert.equal(pad.width, 0.7);
+  assert.equal(pad.height, 0.7);
+}
 console.log(
   "NRST, shared five-pin interface, current sensing and buffered RGB verified",
 );
