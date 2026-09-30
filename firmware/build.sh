@@ -22,5 +22,6 @@ cmake -S "$firmware_work/debugprobe" -B "$firmware_work/build" \
   -DPICO_BOARD_HEADER_DIRS="$repo_root/firmware" \
   -DDEBUG_ON_PICO=OFF -DCMAKE_BUILD_TYPE=Release
 cmake --build "$firmware_work/build" --parallel 4
+python3 "$repo_root/scripts/check-firmware-usb.py" "$firmware_work/build/debugprobe.elf"
 mkdir -p "$repo_root/dist/firmware"
 cp "$firmware_work/build/debugprobe.uf2" "$repo_root/dist/firmware/standard-jst-programmer.uf2"

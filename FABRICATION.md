@@ -1,3 +1,9 @@
+> UART source revision v0.8.0: the current `ProgrammerBoard` is 26 × 42 mm and adds J5
+> (SM03B-SRSS-TB, C160403), host pin order TX/GND/RX, plus two 100-ohm UART
+> resistors. The v0.7.1 fabrication ZIPs described below are historical and do not
+> contain UART. Build and run `npm run export:fabrication` from the new source
+> before producing revised manufacturing files.
+
 # Standard JST programmer v0.7.1 — fabrication package
 
 Source: https://tscircuit.com/tscircuit/standard-jst-programmer, release 0.7.1

@@ -3,6 +3,6 @@
   "mainEntrypoint": "index.tsx",
   "previewComponentPath": "preview.circuit.tsx",
   "projectName": "standard-jst-programmer",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "printBoardInformationToSilkscreen": false
 }

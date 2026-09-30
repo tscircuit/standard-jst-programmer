@@ -1,16 +1,18 @@
 import { StandardTagConnectSwd } from "../tag-connect";
 import type { BoardProps } from "@tscircuit/props";
 import {
+  StandardJstUartSide,
   StandardJstSwdSide,
   StandardJstPowerSide,
   StandardJstSwdResetSide,
 } from "../connectors";
 export default (props: BoardProps = {}) => (
-  <board {...props} width={20} height={33}>
+  <board {...props} width={20} height={48}>
     <schematicsheet name="side-connectors" displayName="Side target connector footprints">
       <schematicsection name="side-swd" displayName="3-pin SWD" sectionTitleFontSize={0.35} />
       <schematicsection name="side-power" displayName="2-pin power" sectionTitleFontSize={0.35} />
       <schematicsection name="side-reset" displayName="5-pin SWD with NRST" sectionTitleFontSize={0.35} />
+      <schematicsection name="side-uart" displayName="3-pin UART (target)" sectionTitleFontSize={0.35} />
       <schematicsection name="side-tag" displayName="Tag-Connect target pads" sectionTitleFontSize={0.35} />
     </schematicsheet>
     <StandardJstSwdSide
@@ -52,6 +54,9 @@ export default (props: BoardProps = {}) => (
       pcbY={2.5}
       fontSize={0.65}
     />
-    <StandardTagConnectSwd name="J4" schX={7} schY={-3} schSheetName="side-connectors" schSectionName="side-tag" pcbX={0} pcbY={-11} />
+    <StandardJstUartSide name="J5" pcbX={0} pcbY={-10}
+      schX={-7} schY={-8} schSheetName="side-connectors" schSectionName="side-uart" />
+    <silkscreentext text="UART" pcbX={4.5} pcbY={-10} fontSize={0.7} />
+    <StandardTagConnectSwd name="J4" schX={7} schY={-3} schSheetName="side-connectors" schSectionName="side-tag" pcbX={0} pcbY={-18.5} />
   </board>
 );

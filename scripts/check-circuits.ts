@@ -24,6 +24,7 @@ for (const variant of ["upward", "side", "programmer"]) {
     ["J1", ["SWCLK", "GND", "SWDIO"]],
     ["J2", ["VOUT", "GND"]],
     ["J3", ["VOUT", "SWDIO", "GND", "SWCLK", "NRST"]],
+    ["J5", variant === "programmer" ? ["TX", "GND", "RX"] : ["RX", "GND", "TX"]],
   ] as const) {
     const j = circuit.find(
       (e) => e.type === "source_component" && e.name === name,
@@ -61,7 +62,7 @@ for (const variant of ["upward", "side", "programmer"]) {
         ? variant === "upward"
           ? "C160391"
           : "C136657"
-        : name === "J1"
+        : (name === "J1" || name === "J5")
           ? variant === "upward"
             ? "C160389"
             : "C160403"
@@ -277,8 +278,8 @@ assert.equal(
         e.model_obj_url ?? "",
       ),
   ).length,
-  3,
-  "preview: all three programmer JST models",
+  4,
+  "preview: all four programmer JST models",
 );
 assert.equal(
   preview.filter((e) => e.type.endsWith("_error")).length,
@@ -548,3 +549,65 @@ assert.deepEqual(
   "registry preview ground pour matches the standalone fabrication board",
 );
 assert.equal(preview.filter((e: any) => e.type.endsWith("_error")).length, 0);
+
+// UART is a separate 3.3 V interface, with source termination at the MCU.
+connected(port("U1", "GPIO8"), port("R_UART_TX", "pin1"));
+connected(port("U1", "GPIO9"), port("R_UART_RX", "pin1"));
+connected(port("R_UART_TX", "pin2"), port("J5", "TX"));
+connected(port("R_UART_RX", "pin2"), port("J5", "RX"));
+connected(port("J5", "GND"), port("U1", "GND"));
+for (const name of ["R_UART_TX", "R_UART_RX"])
+  assert.equal(components.find(e => e.name === name).resistance, 100);
+for (const a of ["TX", "RX", "GND"])
+  for (const b of ["TX", "RX", "GND"])
+    if (a !== b) assert.notEqual(root(port("J5", a)), root(port("J5", b)));
+for (const variant of ["side", "upward", "programmer"]) {
+  const cj = load(variant);
+  const j = cj.find(e => e.type === "source_component" && e.name === "J5");
+  const pc = cj.find(e => e.type === "pcb_component" && e.source_component_id === j.source_component_id);
+  const pads = cj.filter(e => e.type === "pcb_smtpad" && e.pcb_component_id === pc.pcb_component_id && e.pcb_port_id);
+  for (const text of ["TX", "RX", "GND"]) {
+    const sp = cj.find(e => e.type === "source_port" && e.source_component_id === j.source_component_id && e.port_hints.includes(text));
+    const pp = cj.find(e => e.type === "pcb_port" && e.source_port_id === sp.source_port_id);
+    const pad = pads.find(e => e.pcb_port_id === pp.pcb_port_id);
+    const label = cj.find(e => e.type === "pcb_silkscreen_text" && (variant === "programmer" || e.pcb_component_id === pc.pcb_component_id) && e.text === text);
+    assert(label, `${variant}: UART ${text} is printed beside its connector pad`);
+    // Programmer host faces left; its pin labels follow pad Y coordinates.
+    if (variant === "programmer") assert(Math.abs(label.anchor_position.y - pad.y) < 0.001);
+    else assert(Math.abs(label.anchor_position.x - pad.x) < 0.001);
+  }
+}
+assert(circuit.some(e => e.type === "pcb_silkscreen_text" && e.text === "UART"));
+console.log("UART pinout, source termination, isolation, and rotated footprint pin labels verified");
+
+// UART routing must terminate at real copper and keep vias out of solder lands.
+const uartSourceTraceIds = new Set(circuit.filter(e => e.type === "source_trace" &&
+  e.connected_source_port_ids.some((id: string) =>
+    [port("R_UART_TX", "pin1"), port("R_UART_TX", "pin2"),
+     port("R_UART_RX", "pin1"), port("R_UART_RX", "pin2")].includes(id),
+  ),
+).map(e => e.source_trace_id));
+const uartTraces = circuit.filter(e => e.type === "pcb_trace" && uartSourceTraceIds.has(e.source_trace_id));
+assert.equal(uartTraces.length, 4, "all UART signal segments have copper");
+const uartPcbTraceIds = new Set(uartTraces.map(e => e.pcb_trace_id));
+for (const via of circuit.filter(e => e.type === "pcb_via" && uartPcbTraceIds.has(e.pcb_trace_id))) {
+  for (const pad of circuit.filter(e => e.type === "pcb_smtpad" && e.width && e.height)) {
+    const distance = Math.hypot(
+      Math.max(Math.abs(via.x - pad.x) - pad.width / 2, 0),
+      Math.max(Math.abs(via.y - pad.y) - pad.height / 2, 0),
+    );
+    assert(distance - via.outer_diameter / 2 >= 0.2 - 0.001,
+      "UART through vias have at least 0.2 mm clearance from all SMD lands");
+  }
+}
+for (const trace of uartTraces) {
+  for (const id of circuit.find(e => e.type === "source_trace" && e.source_trace_id === trace.source_trace_id).connected_source_port_ids) {
+    const pp = circuit.find(e => e.type === "pcb_port" && e.source_port_id === id);
+    const pad = circuit.find(e => e.type === "pcb_smtpad" && e.pcb_port_id === pp.pcb_port_id);
+    assert([trace.route[0], trace.route.at(-1)].some(p =>
+      p.route_type === "wire" && p.layer === pad.layer &&
+      Math.abs(p.x - pad.x) <= pad.width / 2 && Math.abs(p.y - pad.y) <= pad.height / 2,
+    ), "UART signal endpoint reaches its physical pad");
+  }
+}
+console.log("UART routed pad endpoints and solder-land via clearance verified");

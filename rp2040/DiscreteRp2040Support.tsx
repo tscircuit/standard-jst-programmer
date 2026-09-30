@@ -124,8 +124,8 @@ export const DiscreteRp2040Support = ({
       footprint="0402"
       schSheetName={`${name}__supply`}
       schSectionName={schSections.power(name)}
-      pcbX={-6.5}
-      pcbY={11.7}
+      pcbX={-6.3}
+      pcbY={12.6}
       pcbRotation={90}
       schX={8}
       schY={4}
@@ -405,6 +405,7 @@ export const DiscreteRp2040Support = ({
     />
     <AP2112K_3_3TRG1
       name="U3"
+      pcbStyle={{ silkscreenTextVisibility: "hidden" }}
       schSheetName={`${name}__supply`}
       schSectionName={schSections.power(name)}
       pcbX={-9}
@@ -447,6 +448,7 @@ export const DiscreteRp2040Support = ({
     />
     <XL_1608SURC_06
       name="D_PWR"
+      pcbStyle={{ silkscreenTextVisibility: "hidden" }}
       color="green"
       schSheetName={`${name}__services`}
       schSectionName={schSections.status(name)}
@@ -473,6 +475,7 @@ export const DiscreteRp2040Support = ({
     />
     <resistor
       name="R_PWR_LED"
+      pcbStyle={{ silkscreenTextVisibility: "hidden" }}
       resistance="330"
       footprint="0402"
       schSheetName={`${name}__services`}
@@ -541,8 +544,8 @@ export const DiscreteRp2040Support = ({
       schSheetName={`${name}__supply`}
       schSectionName={schSections.usb(name)}
       schOrientation="vertical"
-      pcbX={-7.5}
-      pcbY={15.5}
+      pcbX={-8.5}
+      pcbY={10.5}
       pcbRotation={0}
       schX={-10}
       schY={5}
@@ -916,7 +919,7 @@ export const DiscreteRp2040Support = ({
       name="C_REG_IN"
       capacitance="1uF"
       footprint="0603"
-      pcbX={-11}
+      pcbX={-11.5}
       pcbY={10.5}
       schX={3}
       schY={1}
@@ -929,14 +932,14 @@ export const DiscreteRp2040Support = ({
       name="C_REG_OUT"
       capacitance="1uF"
       footprint="0603"
-      pcbX={-11}
-      pcbY={16}
+      pcbX={-11.8}
+      pcbY={13}
       schX={11}
       schY={1}
       schOrientation="vertical"
       schSheetName={`${name}__supply`}
       schSectionName={schSections.power(name)}
-      pcbRotation={0}
+      pcbRotation={90}
     />
     <capacitor
       name="C_VREG_IN"
@@ -991,7 +994,6 @@ export const DiscreteRp2040Support = ({
     <copperpour name="GND_BOTTOM" connectsTo="net.GND" layer="bottom" />
     <silkscreentext text="BOOT" fontSize={0.75} pcbX={8.5} pcbY={15.5} />
     <silkscreentext text="RUN" fontSize={0.75} pcbX={9} pcbY={20.1} />
-    <silkscreentext text="PWR" fontSize={0.65} pcbX={-7.5} pcbY={18.5} />
     {children}
   </subcircuit>
 );

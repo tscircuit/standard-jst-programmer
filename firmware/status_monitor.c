@@ -83,10 +83,10 @@ void status_monitor_tick(void) {
             current_ua = target_current_ua(shunt);
             voltage_mv = target_voltage_mv(bus);
         }
-        if (tud_cdc_connected()) {
+        if (tud_cdc_n_connected(1)) {
             char line[100];
-            if (!sent_header && tud_cdc_write_available() >= 40) {
-                tud_cdc_write_str("voltage_mV,current_uA,power_uW,status\r\n");
+            if (!sent_header && tud_cdc_n_write_available(1) >= 40) {
+                tud_cdc_n_write_str(1, "voltage_mV,current_uA,power_uW,status\r\n");
                 sent_header = true;
             }
             int len = sensor_ok ? snprintf(line, sizeof line, "%lu,%ld,%ld,%s\r\n",
@@ -94,11 +94,11 @@ void status_monitor_tick(void) {
                 (long)(target_power_uw(voltage_mv, current_ua)),
                 current_ua > 50000 ? "OVER_BUDGET" : "OK") :
                 snprintf(line, sizeof line, "0,0,0,SENSOR_ERROR\r\n");
-            if (sent_header && tud_cdc_write_available() >= (uint32_t)len) tud_cdc_write(line, len);
-            tud_cdc_write_flush();
-            // USB CDC is telemetry, not a UART bridge on this board.
+            if (sent_header && tud_cdc_n_write_available(1) >= (uint32_t)len) tud_cdc_n_write(1, line, len);
+            tud_cdc_n_write_flush(1);
+            // Drain only telemetry CDC1; UART CDC0 belongs to the upstream bridge.
             uint8_t discard[32];
-            while (tud_cdc_available()) tud_cdc_read(discard, sizeof discard);
+            while (tud_cdc_n_available(1)) tud_cdc_n_read(1, discard, sizeof discard);
         } else sent_header = false;
     }
     if (!sensor_ok || current_ua > 50000 || (saw_fault && (uint32_t)(now-last_fault) < 1000000)) rgb(20,0,0);

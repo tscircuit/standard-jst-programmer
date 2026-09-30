@@ -16,6 +16,8 @@ tsci add tscircuit/standard-jst-programmer
 | --- | --- |
 | `StandardJstSwdUpward` | Upward-facing three-pin SWD connector. Also the default export. |
 | `StandardJstSwdSide` | Side-facing three-pin SWD connector. |
+| `StandardJstUartUpward` | Upward-facing three-pin UART target connector, with RX/GND/TX silkscreen. |
+| `StandardJstUartSide` | Side-facing three-pin UART target connector, with RX/GND/TX silkscreen. |
 | `StandardJstPowerUpward` | Upward-facing two-pin power connector. |
 | `StandardJstPowerSide` | Side-facing two-pin power connector. |
 | `StandardJstSwdResetUpward` | Upward-facing five-pin SWD, power, and NRST drop-in. |
@@ -54,7 +56,59 @@ Connect `TARGET_POWER_IN` to the appropriate supply input on your target: a 3.3 
 
 For side entry, substitute `StandardJstSwdSide` and `StandardJstPowerSide`; the electrical pin assignments stay the same. At `pcbRotation={0}`, side-entry connectors open toward −Y. Rotate 90° for +X, 180° for +Y, or 270° for −X.
 
-All six connector components accept placement props including `pcbX`, `pcbY`, `pcbRotation`, `schX`, and `schY`. The package exports `SwdConnectorProps`, `PowerConnectorProps`, and `SwdResetConnectorProps` types.
+All eight connector components accept placement props including `pcbX`, `pcbY`, `pcbRotation`, `schX`, and `schY`. The package exports `SwdConnectorProps`, `PowerConnectorProps`, `SwdResetConnectorProps`, and `UartConnectorProps` types.
+
+## Add UART to a target board
+
+```tsx
+import { StandardJstUartSide } from "@tsci/tscircuit.standard-jst-programmer"
+
+export default () => (
+  <board width={25} height={20}>
+    <StandardJstUartSide name="J_UART" pcbX={0} pcbY={-6} />
+    <trace from=".J_UART > .RX" to="net.MCU_UART_RX" />
+    <trace from=".J_UART > .GND" to="net.GND" />
+    <trace from=".J_UART > .TX" to="net.MCU_UART_TX" />
+    {/* Add the MCU and 100-ohm series resistors close to its UART pins. */}
+  </board>
+)
+```
+
+Use `StandardJstUartUpward` for top entry. Both components reuse the verified
+three-pin JST SH footprint and matching part/model (side C160403; upward C160389).
+The RX, GND, and TX labels are embedded beside the corresponding contact pads;
+they follow `pcbX`, `pcbY`, and `pcbRotation` automatically. Add a UART legend next
+to the connector to distinguish it from SWD.
+
+Labels describe signals from the local board's perspective. The default
+`role="target"` follows the [Raspberry Pi UART connector specification](https://datasheets.raspberrypi.com/debug/debug-connector-specification.pdf).
+Use `role="host"` on a programmer; it swaps TX/RX selectors and printed labels.
+
+| Contact | Target (default) | Programmer (`role="host"`) |
+| --- | --- | --- |
+| 1 | RX input | TX output |
+| 2 | GND | GND |
+| 3 | TX output | RX input |
+
+A straight-through JST SH cable connects programmer TX to target RX and target
+TX to programmer RX. Do not cross the cable wires as well. J5 on `ProgrammerBoard`
+is the host variant: UART1 GPIO8 TX and GPIO9 RX, each through 100 ohms. Logic is
+fixed at 3.3 V regardless of the power-selector setting. This port has no power
+pin, RTS, or CTS; connect a powered target with compatible logic levels.
+
+Flash firmware built from this source revision (`bash firmware/build.sh`); the
+older v0.5.0 UF2 does not bridge J5. USB exposes UART as CDC0 ("CDC-ACM UART
+Interface") and power telemetry as CDC1 ("Target power telemetry"). Open the UART
+port with DTR enabled and select the target's baud/parity/data/stop settings;
+115200 8N1 is the initial setting. Identify ports by interface description rather
+than assuming a COM or tty number. SWD, UART, and telemetry can operate together.
+
+The updated layouts are shown below; the UART signal labels are part of each
+reusable connector footprint.
+
+![Programmer with J5 UART](docs/uart-programmer-pcb.png)
+![Side-entry target UART footprint](docs/uart-side-pcb.png)
+![Upward-entry target UART footprint](docs/uart-upward-pcb.png)
 
 ## Add the five-pin drop-in
 
@@ -212,9 +266,9 @@ import { ProgrammerBoard } from "@tsci/tscircuit.standard-jst-programmer"
 export default () => <ProgrammerBoard />
 ```
 
-`ProgrammerBoard` contains a `<board>`; use it as the root circuit. USB-C and all three target connectors are on opposite edges. The default package preview displays the standalone programmer fabrication board. The upward and side connector examples remain available as separate circuits.
+`ProgrammerBoard` contains a `<board>`; use it as the root circuit. USB-C and the SWD/power connectors are on opposite edges. J5 UART faces the left edge below the raised power switch, separated from the USB-C input. The programmer retains its original 26 × 42 mm outline. The default package preview displays the standalone programmer fabrication board. The upward and side connector examples remain available as separate circuits.
 
-Connect USB-C to your computer and the SWD cable to your target. Download the [v0.5.0 UF2 firmware](https://github.com/tscircuit/standard-jst-programmer/releases/download/v0.5.0/standard-jst-programmer.uf2). Hold BOOT while connecting USB, then copy the UF2 to the mounted drive. Use the [OpenOCD configuration](https://github.com/tscircuit/standard-jst-programmer/tree/main/firmware). Use `firmware/openocd.cfg` with the three-pin cable, or `firmware/openocd-reset.cfg` with the five-pin cable for hardware reset.
+Connect USB-C to your computer and the SWD cable to your target. Build this revision’s UF2 firmware with `bash firmware/build.sh`; the output is `dist/firmware/standard-jst-programmer.uf2`. Hold BOOT while connecting USB, then copy the UF2 to the mounted drive. Use the [OpenOCD configuration](https://github.com/tscircuit/standard-jst-programmer/tree/main/firmware). Use `firmware/openocd.cfg` with the three-pin cable, or `firmware/openocd-reset.cfg` with the five-pin cable for hardware reset.
 
 Before connecting JST target power, set `SW_PWR` to the labeled **3V3** or **5V** position. Disconnect the power cable before changing voltage. Both positions supply power; there is no OFF position. Leave the two-pin power cable unplugged when the target has another supply. With a five-pin cable, leave pin 1 disconnected on a separately powered target. The JST connectors share SWD signals and selectable power: connect only one target at a time, using either the five-pin cable or the three-pin plus power pair. Keep combined target consumption at or below 50 mA; this output has no dedicated current limiter.
 
@@ -222,14 +276,14 @@ Before connecting JST target power, set `SW_PWR` to the labeled **3V3** or **5V*
 
 ## Read target current
 
-Flash this version's custom firmware using BOOTSEL, then open the programmer's USB serial port at 115200 baud with DTR enabled. It streams CSV at approximately 10 samples per second:
+Flash this version's custom firmware using BOOTSEL, then open the programmer's **Target power telemetry** USB serial port (CDC1) at 115200 baud with DTR enabled. It streams CSV at approximately 10 samples per second:
 
 ```text
 voltage_mV,current_uA,power_uW,status
 3300,12000,39600,OK
 ```
 
-That example means **3.3 V, 12 mA, and 39.6 mW**. Readings cover the combined target current delivered through the two-pin and five-pin power outputs, in either voltage setting. They exclude the fixed J4 rails, the programmer, and its RGB LED. USB serial is used for telemetry, not UART passthrough.
+That example means **3.3 V, 12 mA, and 39.6 mW**. Readings cover the combined target current delivered through the two-pin and five-pin power outputs, in either voltage setting. They exclude the fixed J4 rails, the programmer, and its RGB LED. These CSV readings use the separate telemetry USB serial interface (CDC1). UART passthrough uses CDC0 and never contains telemetry bytes.
 
 Treat these as basic measurements: nominal current resolution is 0.1 mA, with shunt tolerance, sensor offset, and PCB trace resistance contributing to error. `SENSOR_ERROR` indicates unavailable data; `OVER_BUDGET` means the target exceeds the recommended 50 mA load. Neither status cuts off power.
 

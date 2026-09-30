@@ -1,5 +1,9 @@
 /** Schematic-only names; PCB nets and saved routing selectors stay unchanged. */
 const signalLabels: Record<string, string> = {
+  '.U1 > .GPIO8': 'UART_TX_GPIO',
+  '.U1 > .GPIO9': 'UART_RX_GPIO',
+  '.J5 > .TX': 'UART_TX',
+  '.J5 > .RX': 'UART_RX',
   '.U1 > .GPIO2': 'SWCLK_GPIO',
   '.U1 > .GPIO3': 'SWDIO_GPIO',
   '.U1 > .GPIO1': 'NRST_GPIO',
