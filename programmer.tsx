@@ -28,7 +28,7 @@ export function ProgrammerBoard({
       placementDrcChecksDisabled={previewPlacement}
       doubleSidedAssembly={false}
       layers={4}
-      width={34}
+      width={26}
       height={42}
       autorouter="auto-local"
       minTraceToPadEdgeClearance={0.12}
@@ -73,7 +73,8 @@ export function ProgrammerBoard({
           <schematicsection sectionTitleFontSize={0.35} name="MCU__indicator" displayName="Power indicator" />
         </schematicsheet>
         <StandardJstUartSide name="J5" role="host"
-          pcbX={-13.7} pcbY={1.2} pcbRotation={270}
+          pcbX={-8.5} pcbY={17.9} pcbRotation={180}
+          pcbStyle={{ silkscreenTextVisibility: "hidden" }}
           schX={8} schY={-6} schSheetName="MCU__target" schSectionName="uart" />
         <resistor name="R_UART_TX" resistance="100" footprint="0402"
           pcbX={-5.8} pcbY={4.7} schX={3} schY={-5}
@@ -86,7 +87,11 @@ export function ProgrammerBoard({
         <RoutedTrace routingPhaseIndex={100} from=".R_UART_TX > .pin2" to=".J5 > .TX" />
         <RoutedTrace routingPhaseIndex={100} from=".R_UART_RX > .pin2" to=".J5 > .RX" />
         <RoutedTrace from=".J5 > .GND" to="net.GND" />
-        <silkscreentext text="UART" pcbX={-13.7} pcbY={5.5} fontSize={0.65} />
+        <silkscreentext text="PWR" pcbX={-11.3} pcbY={2.9} fontSize={0.55} />
+        <silkscreentext text="UART" pcbX={-12.2} pcbY={17.5} pcbRotation={90} fontSize={0.65} />
+        <silkscreentext text="TX" pcbX={-7.5} pcbY={14.65} fontSize={0.5} />
+        <silkscreentext text="GND" pcbX={-8.5} pcbY={14.65} fontSize={0.5} />
+        <silkscreentext text="RX" pcbX={-9.5} pcbY={14.65} fontSize={0.5} />
         <StandardJstSwdSide
           name="J1"
           pcbStyle={{ silkscreenTextVisibility: "hidden" }}

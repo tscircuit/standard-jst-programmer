@@ -23,7 +23,7 @@ tsci add tscircuit/standard-jst-programmer
 | `StandardJstSwdResetUpward` | Upward-facing five-pin SWD, power, and NRST drop-in. |
 | `StandardJstSwdResetSide` | Side-facing five-pin SWD, power, and NRST drop-in. |
 | `StandardTagConnectSwd` | Bare-pad TC2030 no-legs target footprint for the TC2030-IDC-NL-050 cable. |
-| `ProgrammerBoard` | Complete 34 × 42 mm USB-C programmer; four copper layers, top-side assembly. |
+| `ProgrammerBoard` | Complete 26 × 42 mm USB-C programmer; four copper layers, top-side assembly. |
 
 Each JST connector includes its footprint, JLCPCB part number, and 3D model. The Tag-Connect target is bare copper and alignment holes: no purchased connector is required. Choose the three-pin interface for Raspberry Pi Debug Probe cable compatibility, or the five-pin extension when you also need NRST.
 
@@ -266,7 +266,7 @@ import { ProgrammerBoard } from "@tsci/tscircuit.standard-jst-programmer"
 export default () => <ProgrammerBoard />
 ```
 
-`ProgrammerBoard` contains a `<board>`; use it as the root circuit. USB-C and the SWD/power connectors are on opposite edges. J5 UART is a side-entry connector on the left edge. The UART addition widens the board from 26 to 34 mm. The default package preview displays the standalone programmer fabrication board. The upward and side connector examples remain available as separate circuits.
+`ProgrammerBoard` contains a `<board>`; use it as the root circuit. USB-C and the SWD/power connectors are on opposite edges. J5 UART is a side-entry connector beside USB-C on the upper edge. The programmer retains its original 26 × 42 mm outline. The default package preview displays the standalone programmer fabrication board. The upward and side connector examples remain available as separate circuits.
 
 Connect USB-C to your computer and the SWD cable to your target. Build this revision’s UF2 firmware with `bash firmware/build.sh`; the output is `dist/firmware/standard-jst-programmer.uf2`. Hold BOOT while connecting USB, then copy the UF2 to the mounted drive. Use the [OpenOCD configuration](https://github.com/tscircuit/standard-jst-programmer/tree/main/firmware). Use `firmware/openocd.cfg` with the three-pin cable, or `firmware/openocd-reset.cfg` with the five-pin cable for hardware reset.
 

@@ -313,7 +313,7 @@ for (const design of [compact, preview]) {
   }
 }
 const compactBoard = compact.find((e) => e.type === "pcb_board");
-assert.equal(compactBoard.width, 34);
+assert.equal(compactBoard.width, 26);
 assert.equal(compactBoard.height, 42);
 assert.equal(compactBoard.num_layers, 4);
 assert(
@@ -570,11 +570,10 @@ for (const variant of ["side", "upward", "programmer"]) {
     const sp = cj.find(e => e.type === "source_port" && e.source_component_id === j.source_component_id && e.port_hints.includes(text));
     const pp = cj.find(e => e.type === "pcb_port" && e.source_port_id === sp.source_port_id);
     const pad = pads.find(e => e.pcb_port_id === pp.pcb_port_id);
-    const label = cj.find(e => e.type === "pcb_silkscreen_text" && e.pcb_component_id === pc.pcb_component_id && e.text === text);
-    assert(label, `${variant}: UART ${text} is printed in the reusable footprint`);
-    // Side host is rotated 270 degrees; target examples have rotation zero.
-    if (variant === "programmer") assert(Math.abs(label.anchor_position.y - pad.y) < 0.001);
-    else assert(Math.abs(label.anchor_position.x - pad.x) < 0.001);
+    const label = cj.find(e => e.type === "pcb_silkscreen_text" && (variant === "programmer" || e.pcb_component_id === pc.pcb_component_id) && e.text === text);
+    assert(label, `${variant}: UART ${text} is printed beside its connector pad`);
+    // Programmer host is rotated 180 degrees; all labels follow pad X coordinates.
+    assert(Math.abs(label.anchor_position.x - pad.x) < 0.001);
   }
 }
 assert(circuit.some(e => e.type === "pcb_silkscreen_text" && e.text === "UART"));

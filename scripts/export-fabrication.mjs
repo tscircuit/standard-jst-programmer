@@ -22,7 +22,7 @@ for (const text of [config.projectName.split("-").slice(0, -1).join(" ").toUpper
 const board = circuit.find(e => e.type === "pcb_board")
 assert.equal(circuit.filter(e => e.type === "pcb_board").length, 1)
 assert.equal(board.num_layers, 4)
-assert.equal(board.width, 34)
+assert.equal(board.width, 26)
 assert.equal(board.height, 42)
 const checks = await runAllChecks(circuit)
 const errors = [...circuit, ...checks].filter(e => e.type.endsWith("_error"))
