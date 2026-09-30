@@ -51,12 +51,14 @@ for (const row of bom) {
   if (row.designator === "L_AVDD") row.value = "600 ohm at 100 MHz"
 }
 await write("assembly/BOM.csv", convertBomRowsToCsv(bom))
-await write("assembly/CPL-pcb-rotations.csv", convertCircuitJsonToPickAndPlaceCsv(circuit, { flip_y_axis: false }))
+// Keep exactly one placement CSV, using JLCPCB's orientation conventions.
+for (const name of ["CPL-pcb-rotations.csv", "CPL-jlcpcb-REVIEW-REQUIRED.csv"])
+  await fs.rm(path.join(out, "assembly", name), { force: true })
 const rotations = []
 const supplierCsv = convertCircuitJsonToPickAndPlaceCsv(circuit, {
   flip_y_axis: false, supplier: "jlcpcb", onRotationWarning: warning => rotations.push(warning),
 })
-await write("assembly/CPL-jlcpcb-REVIEW-REQUIRED.csv", supplierCsv)
+await write("assembly/CPL-jlcpcb.csv", supplierCsv)
 const pnp = convertCircuitJsonToPickAndPlaceRows(circuit)
 assert.deepEqual(bom.map(r => r.designator).sort(), pnp.map(r => r.designator).sort())
 assert(pnp.every(r => r.layer === "top"))

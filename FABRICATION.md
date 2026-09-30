@@ -44,13 +44,13 @@ back-side UART legend is included in the actual B_SilkScreen Gerber.
 
 ## Assembly review
 
-BOM.csv and both CPL files contain exactly the same 63 designators. The BOM
+BOM.csv and CPL-jlcpcb.csv contain exactly the same 63 designators. The BOM
 identifies L_AVDD as **Sunlord GZ1608D601TF, C1002, 600 ohm at 100 MHz**, a
 non-polarised 0603 ferrite bead. It must not be substituted with a 600-MH inductor.
 J4 is Samtec **FTSH-103-01-L-DV-TR, C3324375**; its LCSC listing confirms the
 manufacturer part number.
 
-CPL-pcb-rotations.csv contains authored PCB rotations. The supplier CPL applies
+CPL-jlcpcb.csv is the single placement file for JLCPCB and applies
 verified JLCPCB orientation corrections where available. The remaining supplier
 metadata warnings are recorded in rotation-review.json. Before releasing PCBA,
 the assembler must compare these rows with the assembly drawing:
