@@ -1,4 +1,4 @@
-import { fanoutTracePath } from "@tscircuit/props";
+import type { FanoutTracePath } from "@tscircuit/props";
 import uartPaths from "./routing/uart-paths.json";
 import projectConfig from "./tscircuit.config.json";
 import { RoutedTrace } from "./routing/RoutedTrace";
@@ -55,7 +55,7 @@ export function ProgrammerBoard({
         <ProgrammerFinishingTraces />
         {/* Route new UART copper after all checked existing signal paths. */}
         <autoroutingphase name="uart" phaseIndex={100} connections={[]}
-          pcbTracePaths={uartPaths.map(path => fanoutTracePath.parse(path))}
+          pcbTracePaths={uartPaths as FanoutTracePath[]}
           minTraceToPadEdgeClearance={0.16} minViaEdgeToPadEdgeClearance={0.25}
           minViaHoleEdgeToViaHoleEdgeClearance={0.4} />
         <net name="SWCLK" routingPhaseIndex={1} />

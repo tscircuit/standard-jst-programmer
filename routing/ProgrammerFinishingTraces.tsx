@@ -1,9 +1,9 @@
-import { fanoutTracePath } from "@tscircuit/props";
+import type { FanoutTracePath } from "@tscircuit/props";
 import powerPaths from "./finishing-paths.json";
 import signalPaths from "./signal-finishing-paths.json";
 
-const powerTracePaths = powerPaths.map((path) => fanoutTracePath.parse(path));
-const signalTracePaths = signalPaths.map((path) => fanoutTracePath.parse(path));
+const powerTracePaths = powerPaths as FanoutTracePath[];
+const signalTracePaths = signalPaths as FanoutTracePath[];
 
 /**
  * Checked copper paths in programmer-local millimetres (+X right, +Y up).
